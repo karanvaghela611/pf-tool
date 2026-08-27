@@ -297,6 +297,8 @@ label{
 <div class="login-container">
 
 
+    <!-- BRAND -->
+
     <div class="brand-panel">
 
         <div class="brand-content">
@@ -324,13 +326,9 @@ label{
             <div class="orange-line"></div>
 
             <div class="features">
-
                 <div>🛡️ Secure</div>
-
                 <div>⚡ Fast</div>
-
                 <div>✓ Reliable</div>
-
             </div>
 
         </div>
@@ -338,6 +336,7 @@ label{
     </div>
 
 
+    <!-- LOGIN -->
 
     <div class="login-panel">
 
@@ -404,10 +403,8 @@ label{
 
 
             <div class="footer">
-
                 © 2026 PF TOOL<br>
                 by Karan Vaghela
-
             </div>
 
         </div>
@@ -420,9 +417,9 @@ label{
 
 <script>
 
-/* =====================================
-   SUPABASE CONNECTION
-===================================== */
+/* ==============================
+   SUPABASE
+============================== */
 
 const SUPABASE_URL =
     "https://rgcwzrikijrtywuhslwd.supabase.co";
@@ -437,9 +434,9 @@ const supabaseClient =
     );
 
 
-/* =====================================
+/* ==============================
    SHOW PASSWORD
-===================================== */
+============================== */
 
 function showPassword(){
 
@@ -455,7 +452,8 @@ function showPassword(){
         password.type = "text";
         eye.innerText = "🙈";
 
-    }else{
+    }
+    else{
 
         password.type = "password";
         eye.innerText = "👁️";
@@ -465,9 +463,9 @@ function showPassword(){
 }
 
 
-/* =====================================
+/* ==============================
    LOGIN
-===================================== */
+============================== */
 
 async function login(){
 
@@ -485,7 +483,7 @@ async function login(){
         .value;
 
 
-    const error =
+    const errorBox =
         document.getElementById("error");
 
 
@@ -493,12 +491,12 @@ async function login(){
         document.getElementById("loginButton");
 
 
-    error.innerText = "";
+    errorBox.innerText = "";
 
 
     if(clientID === ""){
 
-        error.innerText =
+        errorBox.innerText =
             "Client ID enter karo.";
 
         return;
@@ -508,7 +506,7 @@ async function login(){
 
     if(password === ""){
 
-        error.innerText =
+        errorBox.innerText =
             "Password enter karo.";
 
         return;
@@ -520,56 +518,116 @@ async function login(){
     button.innerText = "LOGIN...";
 
 
-    /*
-       CLIENT ID ko Auth email me convert kar rahe hain.
-
-       CLIENT001
-       ↓
-       client001@pftool.in
-    */
-
-    const email =
-        clientID.toLowerCase()
-        + "@pftool.in";
-
-
     try{
 
-        const { data, error:loginError } =
+        /*
+           CLIENT ID se client ki email
+           database se nikalenge
+        */
+
+        const { data: client, error:clientError } =
+            await supabaseClient
+            .from("karan")
+            .select("client_id, client_name, auth_email, active")
+            .eq("client_id", clientID)
+            .eq("active", true)
+            .maybeSingle();
+
+
+        if(clientError){
+
+            console.error(clientError);
+
+            throw new Error(
+                "Client database check failed."
+            );
+
+        }
+
+
+        if(!client){
+
+            throw new Error(
+                "Client ID not found or inactive."
+            );
+
+        }
+
+
+        if(!client.auth_email){
+
+            throw new Error(
+                "Client login email not configured."
+            );
+
+        }
+
+
+        /*
+           Supabase Auth login
+        */
+
+        const { data:authData, error:authError } =
             await supabaseClient.auth.signInWithPassword({
 
-                email:email,
+                email:client.auth_email,
 
                 password:password
 
             });
 
 
-        if(loginError){
+        if(authError){
 
-            throw loginError;
+            console.error(authError);
+
+            throw new Error(
+                "Invalid Client ID or Password."
+            );
 
         }
 
 
         /*
-           Login successful
+           Save client information
+           for dashboard
+        */
+
+        localStorage.setItem(
+            "pf_client_id",
+            client.client_id
+        );
+
+
+        localStorage.setItem(
+            "pf_client_name",
+            client.client_name
+        );
+
+
+        localStorage.setItem(
+            "pf_auth_email",
+            client.auth_email
+        );
+
+
+        /*
+           Go dashboard
         */
 
         window.location.href =
             "dashboard.html";
 
-
     }
+
 
     catch(error){
 
         console.error(error);
 
-        document
-        .getElementById("error")
-        .innerText =
-            "Invalid Client ID or Password.";
+        errorBox.innerText =
+            error.message ||
+            "Login failed.";
 
         button.disabled = false;
         button.innerText = "LOGIN";
@@ -579,7 +637,9 @@ async function login(){
 }
 
 
-/* ENTER KEY */
+/* ==============================
+   ENTER KEY
+============================== */
 
 document
 .getElementById("password")
