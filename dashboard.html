@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PF TOOL - Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6f8;
+            color: #17202a;
+        }
+
+        /* HEADER */
+
+        header {
+            height: 65px;
+            background: #102a43;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 25px;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #b8c7d9;
+            margin-left: 10px;
+        }
+
+        .logout {
+            background: white;
+            color: #102a43;
+
+            border: none;
+            padding: 9px 15px;
+
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* MAIN */
+
+        main {
+            padding: 25px;
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin: 0;
+        }
+
+        button {
+            border: none;
+            border-radius: 7px;
+
+            padding: 11px 17px;
+
+            background: #1769e0;
+            color: white;
+
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .add {
+            background: #475467;
+            margin-right: 8px;
+        }
+
+        /* NOTICE */
+
+        .notice {
+            background: #eef4ff;
+
+            border: 1px solid #c7d7fe;
+
+            padding: 12px 15px;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            margin-bottom: 15px;
+        }
+
+        /* TABLE */
+
+        .table-box {
+            background: white;
+
+            border-radius: 10px;
+
+            overflow-x: auto;
+
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        }
+
+        table {
+            width: 100%;
+            min-width: 1100px;
+
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #e9eef5;
+
+            padding: 11px;
+
+            font-size: 12px;
+
+            white-space: nowrap;
+
+            border-bottom: 1px solid #d0d5dd;
+        }
+
+        td {
+            padding: 5px;
+
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        td input {
+            width: 100%;
+
+            min-width: 110px;
+
+            padding: 9px;
+
+            border: 1px solid #d0d5dd;
+
+            border-radius: 6px;
+
+            outline: none;
+        }
+
+        td input:focus {
+            border-color: #1769e0;
+        }
+
+        .delete {
+            background: #d92d20;
+
+            padding: 8px 11px;
+        }
+
+        .empty {
+            text-align: center;
+
+            padding: 30px;
+
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header>
+
+    <div>
+
+        <span class="logo">
+            PF TOOL
+        </span>
+
+        <span class="subtitle">
+            ECR Text File Generator
+        </span>
+
+    </div>
+
+
+    <button
+        class="logout"
+        onclick="logout()">
+
+        LOGOUT
+
+    </button>
+
+</header>
+
+
+
+<!-- MAIN -->
+
+<main>
+
+
+    <div class="top">
+
+        <h2>
+            Employee Details
+        </h2>
+
+
+        <div>
+
+            <button
+                class="add"
+                onclick="addRow()">
+
+                + ADD ROW
+
+            </button>
+
+
+            <button
+                onclick="generateTXT()">
+
+                GENERATE TXT
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="notice">
+
+        Enter only
+        <b>UAN</b>,
+        <b>Member Name</b>,
+        <b>Gross Wages</b>
+        and
+        <b>EPF Wages</b>.
+        Other PF values will be calculated automatically.
+
+    </div>
+
+
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>UAN</th>
+
+                    <th>MEMBER NAME</th>
+
+                    <th>GROSS WAGES</th>
+
+                    <th>EPF WAGES</th>
+
+                    <th>EPS WAGES</th>
+
+                    <th>EDLI WAGES</th>
+
+                    <th>EPF CONTRI.</th>
+
+                    <th>EPS CONTRI.</th>
+
+                    <th>EPF EPS DIFF</th>
+
+                    <th>NCP DAYS</th>
+
+                    <th>REFUND</th>
+
+                    <th></th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="employeeTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</main>
+
+
+
+<script>
+
+
+/* ADD EMPLOYEE ROW */
+
+function addRow() {
+
+
+    const table =
+        document.getElementById("employeeTable");
+
+
+    const row =
+        document.createElement("tr");
+
+
+    row.innerHTML = `
+
+        <td>
+            <input
+                type="text"
+                class="uan"
+                maxlength="12"
+                placeholder="UAN">
+        </td>
+
+        <td>
+            <input
+                type="text"
+                class="name"
+                placeholder="Member Name">
+        </td>
+
+        <td>
+            <input
+                type="number"
+                class="gross"
+                placeholder="Gross"
+                oninput="calculate(this)">
+        </td>
+
+        <td>
+            <input
+                type="number"
+                class="epfw"
+                placeholder="EPF Wages"
+                oninput="calculate(this)">
+        </td>
+
+        <td class="epsw">
+            0
+        </td>
+
+        <td class="edli">
+            0
+        </td>
+
+        <td class="epf">
+            0
+        </td>
+
+        <td class="eps">
+            0
+        </td>
+
+        <td class="diff">
+            0
+        </td>
+
+        <td>
+            <input
+                type="number"
+                class="ncp"
+                value="0"
+                min="0"
+                max="31">
+        </td>
+
+        <td>
+            <input
+                type="number"
+                class="refund"
+                value="0"
+                min="0">
+        </td>
+
+        <td>
+            <button
+                class="delete"
+                onclick="deleteRow(this)">
+
+                X
+
+            </button>
+        </td>
+
+    `;
+
+
+    table.appendChild(row);
+
+}
+
+
+
+/* CALCULATE */
+
+function calculate(input) {
+
+
+    const row =
+        input.closest("tr");
+
+
+    const gross =
+        Number(
+            row.querySelector(".gross").value
+        ) || 0;
+
+
+    const epfw =
+        Number(
+            row.querySelector(".epfw").value
+        ) || 0;
+
+
+    /*
+       PF CALCULATION
+    */
+
+
+    let epsw;
+
+
+    if (gross > 29999) {
+
+        epsw = 15000;
+
+    } else {
+
+        epsw = epfw;
+
+    }
+
+
+    const edli =
+        Math.min(epfw, 15000);
+
+
+    const epf =
+        Math.ceil(epfw * 0.12);
+
+
+    const rawEPS =
+        epsw * 0.0833;
+
+
+    const baseEPS =
+        Math.floor(rawEPS);
+
+
+    const fraction =
+        rawEPS - baseEPS;
+
+
+    const eps =
+        fraction <= 0.49
+        ? baseEPS
+        : baseEPS + 1;
+
+
+    const diff =
+        epf - eps;
+
+
+    row.querySelector(".epsw").innerText =
+        epsw;
+
+
+    row.querySelector(".edli").innerText =
+        edli;
+
+
+    row.querySelector(".epf").innerText =
+        epf;
+
+
+    row.querySelector(".eps").innerText =
+        eps;
+
+
+    row.querySelector(".diff").innerText =
+        diff;
+
+}
+
+
+
+/* DELETE ROW */
+
+function deleteRow(button) {
+
+    button
+        .closest("tr")
+        .remove();
+
+}
+
+
+
+/* LOGOUT */
+
+function logout() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+
+/* TXT */
+
+function generateTXT() {
+
+    alert(
+        "TXT generator next step me connect karenge."
+    );
+
+}
+
+
+
+/* START WITH 5 ROWS */
+
+for (let i = 0; i < 5; i++) {
+
+    addRow();
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
