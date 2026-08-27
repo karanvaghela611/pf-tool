@@ -229,10 +229,6 @@ label{
     cursor:pointer;
 }
 
-.login-button:hover{
-    opacity:.94;
-}
-
 .login-button:disabled{
     opacity:.6;
     cursor:wait;
@@ -305,7 +301,7 @@ label{
 <div class="login-container">
 
 
-    <!-- LEFT BRAND PANEL -->
+    <!-- LEFT -->
 
     <div class="brand-panel">
 
@@ -314,40 +310,29 @@ label{
             <div class="logo-circle">
 
                 <div class="logo-pf">
-
                     <span class="logo-p">P</span><span class="logo-f">F</span>
-
                 </div>
 
             </div>
-
 
             <div class="brand-title">
                 PF TOOL
             </div>
 
-
             <div class="by-text">
                 by Karan Vaghela
             </div>
-
 
             <div class="mobile">
                 📱 9574140727
             </div>
 
-
             <div class="orange-line"></div>
 
-
             <div class="features">
-
                 <div>🛡️ Secure</div>
-
                 <div>⚡ Fast</div>
-
                 <div>✓ Reliable</div>
-
             </div>
 
         </div>
@@ -355,30 +340,24 @@ label{
     </div>
 
 
-
-    <!-- RIGHT LOGIN PANEL -->
+    <!-- RIGHT -->
 
     <div class="login-panel">
 
         <div class="login-content">
 
-
             <div class="welcome">
                 Welcome Back!
             </div>
-
 
             <div class="login-subtitle">
                 Login to access your account
             </div>
 
 
-            <!-- CLIENT ID -->
-
             <label>
                 Client ID
             </label>
-
 
             <div class="input-box">
 
@@ -392,13 +371,9 @@ label{
             </div>
 
 
-
-            <!-- PASSWORD -->
-
             <label>
                 Password
             </label>
-
 
             <div class="input-box">
 
@@ -413,16 +388,11 @@ label{
                     class="eye"
                     id="eye"
                     onclick="togglePassword()">
-
                     👁️
-
                 </span>
 
             </div>
 
-
-
-            <!-- LOGIN BUTTON -->
 
             <button
                 class="login-button"
@@ -434,19 +404,13 @@ label{
             </button>
 
 
-            <!-- ERROR -->
-
             <div id="error"></div>
 
 
             <div class="footer">
-
                 © 2026 PF TOOL<br>
-
                 by Karan Vaghela
-
             </div>
-
 
         </div>
 
@@ -455,22 +419,18 @@ label{
 </div>
 
 
-
 <script>
 
 
-/* ==================================================
+/* =========================================
    SUPABASE CONNECTION
-================================================== */
-
+========================================= */
 
 const SUPABASE_URL =
     "https://rgcwzrikijrtywuhslwd.supabase.co";
 
-
 const SUPABASE_KEY =
     "sb_publishable_wg8Hxz9ac5n4j8qzhfkY-w_LuRTJS0Q";
-
 
 const supabaseClient =
     window.supabase.createClient(
@@ -479,11 +439,9 @@ const supabaseClient =
     );
 
 
-
-/* ==================================================
-   PASSWORD SHOW / HIDE
-================================================== */
-
+/* =========================================
+   SHOW / HIDE PASSWORD
+========================================= */
 
 function togglePassword(){
 
@@ -497,14 +455,12 @@ function togglePassword(){
     if(password.type === "password"){
 
         password.type = "text";
-
         eye.innerText = "🙈";
 
     }
     else{
 
         password.type = "password";
-
         eye.innerText = "👁️";
 
     }
@@ -512,52 +468,27 @@ function togglePassword(){
 }
 
 
-
-/* ==================================================
-   SHOW ERROR
-================================================== */
-
-
-function showError(message){
-
-    const error =
-        document.getElementById("error");
-
-    error.className = "";
-
-    error.innerText = message;
-
-}
-
-
-
-/* ==================================================
-   LOGIN
-================================================== */
-
+/* =========================================
+   LOGIN TEST
+========================================= */
 
 async function login(){
-
 
     const clientID =
         document
         .getElementById("clientID")
         .value
-        .trim()
-        .toUpperCase();
-
+        .trim();
 
     const password =
         document
         .getElementById("password")
         .value;
 
-
     const button =
         document.getElementById(
             "loginButton"
         );
-
 
     const errorBox =
         document.getElementById(
@@ -566,144 +497,51 @@ async function login(){
 
 
     errorBox.innerText = "";
-
     errorBox.className = "";
 
 
-
-    /* EMPTY CLIENT ID */
-
     if(clientID === ""){
 
-        showError(
-            "Client ID enter karo."
-        );
+        errorBox.innerText =
+            "Client ID enter karo.";
 
         return;
 
     }
 
-
-
-    /* EMPTY PASSWORD */
 
     if(password === ""){
 
-        showError(
-            "Password enter karo."
-        );
+        errorBox.innerText =
+            "Password enter karo.";
 
         return;
 
     }
 
 
-
     button.disabled = true;
-
-    button.innerText = "CHECKING...";
-
+    button.innerText = "LOGIN...";
 
 
     try{
 
 
-        /* ==========================================
-           1. CLIENT ID DATABASE ME CHECK
-        ========================================== */
+        /*
+           TEMPORARY AUTH TEST
 
+           Abhi Client ID database se
+           verify nahi kar rahe.
+
+           Sirf Supabase Auth test kar rahe hain.
+        */
 
         const result =
-            await supabaseClient
-            .from("karan")
-            .select(
-                "client_id, client_name, auth_email, active"
-            )
-            .eq(
-                "client_id",
-                clientID
-            )
-            .maybeSingle();
-
-
-        const client =
-            result.data;
-
-
-        const clientError =
-            result.error;
-
-
-        if(clientError){
-
-            console.error(
-                "Database Error:",
-                clientError
-            );
-
-            throw new Error(
-                "Database connection error."
-            );
-
-        }
-
-
-
-        /* CLIENT NOT FOUND */
-
-        if(!client){
-
-            throw new Error(
-                "Client ID not found."
-            );
-
-        }
-
-
-
-        /* CLIENT INACTIVE */
-
-        if(client.active !== true){
-
-            throw new Error(
-                "This client account is inactive."
-            );
-
-        }
-
-
-
-        /* EMAIL MISSING */
-
-        if(
-            !client.auth_email ||
-            client.auth_email.trim() === ""
-        ){
-
-            throw new Error(
-                "Client login is not configured."
-            );
-
-        }
-
-
-
-        /* ==========================================
-           2. SUPABASE AUTH LOGIN
-        ========================================== */
-
-
-        button.innerText =
-            "VERIFYING...";
-
-
-        const authResult =
-            await supabaseClient
-            .auth
+            await supabaseClient.auth
             .signInWithPassword({
 
                 email:
-                    client.auth_email.trim(),
+                    "karandarjipk@gmail.com",
 
                 password:
                     password
@@ -711,69 +549,53 @@ async function login(){
             });
 
 
-        const authData =
-            authResult.data;
-
-
-        const authError =
-            authResult.error;
-
-
-        if(authError){
+        if(result.error){
 
             console.error(
-                "Auth Error:",
-                authError
+                "SUPABASE ERROR:",
+                result.error
             );
 
-            throw new Error(
-                "Invalid Client ID or Password."
-            );
+            throw result.error;
 
         }
 
 
-
-        /* ==========================================
-           3. SAVE CLIENT SESSION INFO
-        ========================================== */
-
+        /*
+           Save login information
+        */
 
         localStorage.setItem(
             "pf_client_id",
-            client.client_id
-        );
-
-
-        localStorage.setItem(
-            "pf_client_name",
-            client.client_name
+            clientID.toUpperCase()
         );
 
 
         localStorage.setItem(
             "pf_auth_email",
-            client.auth_email
+            "karandarjipk@gmail.com"
         );
 
 
+        /*
+           SUCCESS
+        */
 
-        /* ==========================================
-           4. LOGIN SUCCESS
-        ========================================== */
+        errorBox.className =
+            "success";
+
+        errorBox.innerText =
+            "SUPABASE LOGIN SUCCESS ✓";
 
 
         button.innerText =
             "SUCCESS ✓";
 
 
-        errorBox.className =
-            "success";
-
-
-        errorBox.innerText =
-            "Login successful. Opening dashboard...";
-
+        /*
+           TEMPORARY:
+           Dashboard open after success
+        */
 
         setTimeout(
             function(){
@@ -782,43 +604,38 @@ async function login(){
                     "dashboard.html";
 
             },
-            500
+            700
         );
 
 
     }
-
-
     catch(error){
 
-
         console.error(
-            "Login Error:",
+            "LOGIN ERROR:",
             error
         );
 
 
-        showError(
-            error.message ||
-            "Login failed."
-        );
+        errorBox.innerText =
+            "Login Error: " +
+            (
+                error.message ||
+                "Login failed"
+            );
 
 
         button.disabled = false;
-
-        button.innerText =
-            "LOGIN";
+        button.innerText = "LOGIN";
 
     }
 
 }
 
 
-
-/* ==================================================
+/* =========================================
    ENTER KEY
-================================================== */
-
+========================================= */
 
 document
 .getElementById("password")
@@ -851,9 +668,7 @@ document
     }
 );
 
-
 </script>
-
 
 </body>
 
