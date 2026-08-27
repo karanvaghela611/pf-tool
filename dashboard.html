@@ -2,190 +2,238 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>PF TOOL - Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
+<title>PF TOOL - ECR Generator</title>
 
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
 
-        body {
-            margin: 0;
-            background: #f4f6f8;
-            color: #17202a;
-        }
+*{
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
 
-        /* HEADER */
+body{
+    margin:0;
+    background:#f4f6f8;
+    color:#17202a;
+}
 
-        header {
-            height: 65px;
-            background: #102a43;
-            color: white;
+/* HEADER */
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+header{
+    height:65px;
+    background:#102a43;
+    color:white;
 
-            padding: 0 25px;
-        }
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 
-        .logo {
-            font-size: 23px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+    padding:0 25px;
+}
 
-        .subtitle {
-            font-size: 13px;
-            color: #b8c7d9;
-            margin-left: 10px;
-        }
+.logo{
+    font-size:23px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
 
-        .logout {
-            background: white;
-            color: #102a43;
+.subtitle{
+    font-size:13px;
+    color:#b8c7d9;
+    margin-left:10px;
+}
 
-            border: none;
-            padding: 9px 15px;
+.logout{
+    background:white;
+    color:#102a43;
+    border:none;
+    padding:9px 15px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
 
-            border-radius: 7px;
-            cursor: pointer;
-            font-weight: bold;
-        }
 
-        /* MAIN */
+/* MAIN */
 
-        main {
-            padding: 25px;
-            max-width: 1500px;
-            margin: auto;
-        }
+main{
+    padding:25px;
+    max-width:1600px;
+    margin:auto;
+}
 
-        .top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
 
-            margin-bottom: 15px;
-        }
+/* TOP */
 
-        h2 {
-            margin: 0;
-        }
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
 
-        button {
-            border: none;
-            border-radius: 7px;
+h2{
+    margin:0;
+    font-size:23px;
+}
 
-            padding: 11px 17px;
 
-            background: #1769e0;
-            color: white;
+/* BUTTONS */
 
-            font-weight: bold;
-            cursor: pointer;
-        }
+button{
+    border:none;
+    border-radius:7px;
+    padding:11px 17px;
 
-        button:hover {
-            opacity: 0.9;
-        }
+    background:#1769e0;
+    color:white;
 
-        .add {
-            background: #475467;
-            margin-right: 8px;
-        }
+    font-weight:bold;
+    cursor:pointer;
+}
 
-        /* NOTICE */
+button:hover{
+    opacity:.9;
+}
 
-        .notice {
-            background: #eef4ff;
+.add{
+    background:#475467;
+    margin-right:8px;
+}
 
-            border: 1px solid #c7d7fe;
+.generate{
+    background:#087443;
+}
 
-            padding: 12px 15px;
 
-            border-radius: 8px;
+/* NOTICE */
 
-            font-size: 13px;
+.notice{
+    background:#eef4ff;
 
-            margin-bottom: 15px;
-        }
+    border:1px solid #c7d7fe;
 
-        /* TABLE */
+    padding:13px 15px;
 
-        .table-box {
-            background: white;
+    border-radius:8px;
 
-            border-radius: 10px;
+    font-size:13px;
 
-            overflow-x: auto;
+    margin-bottom:15px;
+}
 
-            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
-        }
 
-        table {
-            width: 100%;
-            min-width: 1100px;
+/* TABLE */
 
-            border-collapse: collapse;
-        }
+.table-box{
+    background:white;
 
-        th {
-            background: #e9eef5;
+    border-radius:10px;
 
-            padding: 11px;
+    overflow-x:auto;
 
-            font-size: 12px;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+}
 
-            white-space: nowrap;
+table{
+    width:100%;
 
-            border-bottom: 1px solid #d0d5dd;
-        }
+    min-width:1350px;
 
-        td {
-            padding: 5px;
+    border-collapse:collapse;
+}
 
-            border-bottom: 1px solid #eaecf0;
-        }
+th{
+    background:#e9eef5;
 
-        td input {
-            width: 100%;
+    padding:12px 8px;
 
-            min-width: 110px;
+    font-size:12px;
 
-            padding: 9px;
+    white-space:nowrap;
 
-            border: 1px solid #d0d5dd;
+    border-bottom:1px solid #d0d5dd;
+}
 
-            border-radius: 6px;
+td{
+    padding:5px;
 
-            outline: none;
-        }
+    border-bottom:1px solid #eaecf0;
 
-        td input:focus {
-            border-color: #1769e0;
-        }
+    text-align:center;
+}
 
-        .delete {
-            background: #d92d20;
+td input{
+    width:100%;
 
-            padding: 8px 11px;
-        }
+    min-width:110px;
 
-        .empty {
-            text-align: center;
+    padding:9px;
 
-            padding: 30px;
+    border:1px solid #d0d5dd;
 
-            color: #777;
-        }
+    border-radius:6px;
 
-    </style>
+    outline:none;
+
+    font-size:13px;
+}
+
+td input:focus{
+    border-color:#1769e0;
+}
+
+
+/* CALCULATED */
+
+.calculated{
+    background:#f8fafc;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    white-space:nowrap;
+}
+
+
+/* DELETE */
+
+.delete{
+    background:#d92d20;
+
+    padding:8px 11px;
+
+    font-size:14px;
+}
+
+
+/* FOOTER */
+
+.footer{
+    margin-top:18px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    color:#667085;
+
+    font-size:13px;
+}
+
+.employee-count{
+    font-weight:bold;
+    color:#344054;
+}
+
+</style>
 
 </head>
 
@@ -246,6 +294,7 @@
 
 
             <button
+                class="generate"
                 onclick="generateTXT()">
 
                 GENERATE TXT
@@ -260,17 +309,25 @@
 
     <div class="notice">
 
-        Enter only
-        <b>UAN</b>,
-        <b>Member Name</b>,
-        <b>Gross Wages</b>
-        and
-        <b>EPF Wages</b>.
-        Other PF values will be calculated automatically.
+        <b>Manual Entry:</b>
+
+        UAN, Member Name, Gross Wages
+        and EPF Wages.
+
+        <br><br>
+
+        <b>Automatic:</b>
+
+        EPS Wages, EDLI Wages,
+        EPF Contribution,
+        EPS Contribution
+        and EPF EPS Difference.
 
     </div>
 
 
+
+    <!-- TABLE -->
 
     <div class="table-box">
 
@@ -280,29 +337,53 @@
 
                 <tr>
 
-                    <th>UAN</th>
+                    <th>
+                        UAN
+                    </th>
 
-                    <th>MEMBER NAME</th>
+                    <th>
+                        MEMBER NAME
+                    </th>
 
-                    <th>GROSS WAGES</th>
+                    <th>
+                        GROSS WAGES
+                    </th>
 
-                    <th>EPF WAGES</th>
+                    <th>
+                        EPF WAGES
+                    </th>
 
-                    <th>EPS WAGES</th>
+                    <th>
+                        EPS WAGES
+                    </th>
 
-                    <th>EDLI WAGES</th>
+                    <th>
+                        EDLI WAGES
+                    </th>
 
-                    <th>EPF CONTRI.</th>
+                    <th>
+                        EPF CONTRI.
+                    </th>
 
-                    <th>EPS CONTRI.</th>
+                    <th>
+                        EPS CONTRI.
+                    </th>
 
-                    <th>EPF EPS DIFF</th>
+                    <th>
+                        EPF EPS DIFF
+                    </th>
 
-                    <th>NCP DAYS</th>
+                    <th>
+                        NCP DAYS
+                    </th>
 
-                    <th>REFUND</th>
+                    <th>
+                        REFUND
+                    </th>
 
-                    <th></th>
+                    <th>
+                        DELETE
+                    </th>
 
                 </tr>
 
@@ -318,6 +399,28 @@
     </div>
 
 
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <div class="employee-count">
+
+            Employees:
+            <span id="count">0</span>
+
+        </div>
+
+
+        <div>
+
+            PF TOOL ECR Generator
+
+        </div>
+
+    </div>
+
+
 </main>
 
 
@@ -325,13 +428,17 @@
 <script>
 
 
-/* ADD EMPLOYEE ROW */
+/* =========================================
+   ADD ROW
+========================================= */
 
-function addRow() {
 
+function addRow(){
 
     const table =
-        document.getElementById("employeeTable");
+        document.getElementById(
+            "employeeTable"
+        );
 
 
     const row =
@@ -341,74 +448,110 @@ function addRow() {
     row.innerHTML = `
 
         <td>
+
             <input
                 type="text"
                 class="uan"
                 maxlength="12"
                 placeholder="UAN">
+
         </td>
 
+
         <td>
+
             <input
                 type="text"
                 class="name"
                 placeholder="Member Name">
+
         </td>
 
+
         <td>
+
             <input
                 type="number"
                 class="gross"
+                min="0"
                 placeholder="Gross"
                 oninput="calculate(this)">
+
         </td>
 
+
         <td>
+
             <input
                 type="number"
                 class="epfw"
+                min="0"
                 placeholder="EPF Wages"
                 oninput="calculate(this)">
+
         </td>
 
-        <td class="epsw">
+
+        <td class="calculated epsw">
+
             0
+
         </td>
 
-        <td class="edli">
+
+        <td class="calculated edli">
+
             0
+
         </td>
 
-        <td class="epf">
+
+        <td class="calculated epf">
+
             0
+
         </td>
 
-        <td class="eps">
+
+        <td class="calculated eps">
+
             0
+
         </td>
 
-        <td class="diff">
+
+        <td class="calculated diff">
+
             0
+
         </td>
+
 
         <td>
+
             <input
                 type="number"
                 class="ncp"
-                value="0"
                 min="0"
-                max="31">
+                max="31"
+                value="0">
+
         </td>
 
+
         <td>
+
             <input
                 type="number"
                 class="refund"
-                value="0"
-                min="0">
+                min="0"
+                value="0">
+
         </td>
 
+
         <td>
+
             <button
                 class="delete"
                 onclick="deleteRow(this)">
@@ -416,6 +559,7 @@ function addRow() {
                 X
 
             </button>
+
         </td>
 
     `;
@@ -423,14 +567,19 @@ function addRow() {
 
     table.appendChild(row);
 
+
+    updateCount();
+
 }
 
 
 
-/* CALCULATE */
+/* =========================================
+   CALCULATE PF
+========================================= */
 
-function calculate(input) {
 
+function calculate(input){
 
     const row =
         input.closest("tr");
@@ -448,31 +597,63 @@ function calculate(input) {
         ) || 0;
 
 
+
     /*
-       PF CALCULATION
+       EPS WAGES
+
+       Gross > 29999
+       = 15000
+
+       Otherwise
+       = EPF Wages
     */
 
 
     let epsw;
 
 
-    if (gross > 29999) {
+    if(gross > 29999){
 
         epsw = 15000;
 
-    } else {
+    }
+
+    else{
 
         epsw = epfw;
 
     }
 
 
+
+    /*
+       EDLI WAGES
+    */
+
+
     const edli =
-        Math.min(epfw, 15000);
+        Math.min(
+            epfw,
+            15000
+        );
+
+
+
+    /*
+       EPF CONTRIBUTION
+    */
 
 
     const epf =
-        Math.ceil(epfw * 0.12);
+        Math.ceil(
+            epfw * 0.12
+        );
+
+
+
+    /*
+       EPS CONTRIBUTION
+    */
 
 
     const rawEPS =
@@ -487,14 +668,36 @@ function calculate(input) {
         rawEPS - baseEPS;
 
 
-    const eps =
-        fraction <= 0.49
-        ? baseEPS
-        : baseEPS + 1;
+    let eps;
+
+
+    if(fraction <= 0.49){
+
+        eps = baseEPS;
+
+    }
+
+    else{
+
+        eps = baseEPS + 1;
+
+    }
+
+
+
+    /*
+       EPF - EPS DIFFERENCE
+    */
 
 
     const diff =
         epf - eps;
+
+
+
+    /*
+       DISPLAY
+    */
 
 
     row.querySelector(".epsw").innerText =
@@ -516,25 +719,356 @@ function calculate(input) {
     row.querySelector(".diff").innerText =
         diff;
 
+
+
 }
 
 
 
-/* DELETE ROW */
+/* =========================================
+   DELETE ROW
+========================================= */
 
-function deleteRow(button) {
+
+function deleteRow(button){
 
     button
         .closest("tr")
         .remove();
 
+
+    updateCount();
+
 }
 
 
 
-/* LOGOUT */
+/* =========================================
+   COUNT
+========================================= */
 
-function logout() {
+
+function updateCount(){
+
+    const rows =
+        document.querySelectorAll(
+            "#employeeTable tr"
+        );
+
+
+    document.getElementById(
+        "count"
+    ).innerText =
+        rows.length;
+
+}
+
+
+
+/* =========================================
+   GENERATE TXT
+========================================= */
+
+
+function generateTXT(){
+
+
+    const rows =
+        document.querySelectorAll(
+            "#employeeTable tr"
+        );
+
+
+    if(rows.length === 0){
+
+        alert(
+            "Please add employee first."
+        );
+
+        return;
+
+    }
+
+
+
+    let txt = "";
+
+    let count = 0;
+
+
+
+    for(
+        const row of rows
+    ){
+
+
+        const uan =
+            row.querySelector(
+                ".uan"
+            ).value.trim();
+
+
+        const name =
+            row.querySelector(
+                ".name"
+            ).value.trim();
+
+
+        const gross =
+            Number(
+                row.querySelector(
+                    ".gross"
+                ).value
+            ) || 0;
+
+
+        const epfw =
+            Number(
+                row.querySelector(
+                    ".epfw"
+                ).value
+            ) || 0;
+
+
+        const epsw =
+            row.querySelector(
+                ".epsw"
+            ).innerText;
+
+
+        const edli =
+            row.querySelector(
+                ".edli"
+            ).innerText;
+
+
+        const epf =
+            row.querySelector(
+                ".epf"
+            ).innerText;
+
+
+        const eps =
+            row.querySelector(
+                ".eps"
+            ).innerText;
+
+
+        const diff =
+            row.querySelector(
+                ".diff"
+            ).innerText;
+
+
+        const ncp =
+            row.querySelector(
+                ".ncp"
+            ).value || 0;
+
+
+        const refund =
+            row.querySelector(
+                ".refund"
+            ).value || 0;
+
+
+
+        /*
+           SKIP EMPTY ROW
+        */
+
+
+        if(
+
+            uan === "" &&
+            name === "" &&
+            gross === 0 &&
+            epfw === 0
+
+        ){
+
+            continue;
+
+        }
+
+
+
+        /*
+           VALIDATION
+        */
+
+
+        if(uan === ""){
+
+            alert(
+                "UAN missing hai."
+            );
+
+            return;
+
+        }
+
+
+        if(!/^\d{12}$/.test(uan)){
+
+            alert(
+                "UAN exactly 12 digit hona chahiye."
+            );
+
+            return;
+
+        }
+
+
+        if(name === ""){
+
+            alert(
+                "Member Name missing hai."
+            );
+
+            return;
+
+        }
+
+
+        if(epfw <= 0){
+
+            alert(
+                "EPF Wages enter karo."
+            );
+
+            return;
+
+        }
+
+
+
+        /*
+           ECR LINE
+
+           #~# separator
+        */
+
+
+        const line = [
+
+            uan,
+            name,
+            gross,
+            epfw,
+            epsw,
+            edli,
+            epf,
+            eps,
+            diff,
+            ncp,
+            refund
+
+        ].join("#~#");
+
+
+
+        txt +=
+            line +
+            "\r\n";
+
+
+        count++;
+
+
+    }
+
+
+
+    if(count === 0){
+
+        alert(
+            "Koi employee data nahi hai."
+        );
+
+        return;
+
+    }
+
+
+
+    /*
+       CREATE TXT FILE
+    */
+
+
+    const blob =
+        new Blob(
+
+            [txt],
+
+            {
+                type:
+                "text/plain;charset=utf-8"
+            }
+
+        );
+
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "PF_ECR.txt";
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+
+
+    alert(
+
+        "PF_ECR.txt ready!\n\n" +
+        "Total Employees: " +
+        count
+
+    );
+
+}
+
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+
+function logout(){
 
     window.location.href =
         "index.html";
@@ -543,21 +1077,16 @@ function logout() {
 
 
 
-/* TXT */
-
-function generateTXT() {
-
-    alert(
-        "TXT generator next step me connect karenge."
-    );
-
-}
+/* =========================================
+   INITIAL ROWS
+========================================= */
 
 
-
-/* START WITH 5 ROWS */
-
-for (let i = 0; i < 5; i++) {
+for(
+    let i = 0;
+    i < 5;
+    i++
+){
 
     addRow();
 
