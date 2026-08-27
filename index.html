@@ -32,7 +32,7 @@ body{
     width:1100px;
     max-width:100%;
     min-height:650px;
-    background:white;
+    background:#fff;
     border-radius:25px;
     overflow:hidden;
     display:flex;
@@ -53,7 +53,7 @@ body{
     overflow:hidden;
 }
 
-.brand-panel::before{
+.brand-panel:before{
     content:"";
     position:absolute;
     width:450px;
@@ -64,7 +64,7 @@ body{
     bottom:-170px;
 }
 
-.brand-panel::after{
+.brand-panel:after{
     content:"";
     position:absolute;
     width:350px;
@@ -229,18 +229,26 @@ label{
     cursor:pointer;
 }
 
+.login-button:hover{
+    opacity:.94;
+}
+
 .login-button:disabled{
     opacity:.6;
     cursor:wait;
 }
 
 #error{
-    min-height:22px;
+    min-height:25px;
     margin-top:15px;
     text-align:center;
     color:#d92d20;
     font-size:14px;
     font-weight:bold;
+}
+
+.success{
+    color:#087443 !important;
 }
 
 .footer{
@@ -297,7 +305,7 @@ label{
 <div class="login-container">
 
 
-    <!-- BRAND -->
+    <!-- LEFT BRAND PANEL -->
 
     <div class="brand-panel">
 
@@ -306,29 +314,40 @@ label{
             <div class="logo-circle">
 
                 <div class="logo-pf">
+
                     <span class="logo-p">P</span><span class="logo-f">F</span>
+
                 </div>
 
             </div>
+
 
             <div class="brand-title">
                 PF TOOL
             </div>
 
+
             <div class="by-text">
                 by Karan Vaghela
             </div>
+
 
             <div class="mobile">
                 📱 9574140727
             </div>
 
+
             <div class="orange-line"></div>
 
+
             <div class="features">
+
                 <div>🛡️ Secure</div>
+
                 <div>⚡ Fast</div>
+
                 <div>✓ Reliable</div>
+
             </div>
 
         </div>
@@ -336,24 +355,30 @@ label{
     </div>
 
 
-    <!-- LOGIN -->
+
+    <!-- RIGHT LOGIN PANEL -->
 
     <div class="login-panel">
 
         <div class="login-content">
 
+
             <div class="welcome">
                 Welcome Back!
             </div>
+
 
             <div class="login-subtitle">
                 Login to access your account
             </div>
 
 
+            <!-- CLIENT ID -->
+
             <label>
                 Client ID
             </label>
+
 
             <div class="input-box">
 
@@ -361,14 +386,19 @@ label{
                     type="text"
                     id="clientID"
                     placeholder="Enter Client ID"
-                    autocomplete="username">
+                    autocomplete="username"
+                    spellcheck="false">
 
             </div>
 
 
+
+            <!-- PASSWORD -->
+
             <label>
                 Password
             </label>
+
 
             <div class="input-box">
 
@@ -382,12 +412,17 @@ label{
                 <span
                     class="eye"
                     id="eye"
-                    onclick="showPassword()">
+                    onclick="togglePassword()">
+
                     👁️
+
                 </span>
 
             </div>
 
+
+
+            <!-- LOGIN BUTTON -->
 
             <button
                 class="login-button"
@@ -399,13 +434,19 @@ label{
             </button>
 
 
+            <!-- ERROR -->
+
             <div id="error"></div>
 
 
             <div class="footer">
+
                 © 2026 PF TOOL<br>
+
                 by Karan Vaghela
+
             </div>
+
 
         </div>
 
@@ -417,15 +458,19 @@ label{
 
 <script>
 
-/* ==============================
-   SUPABASE
-============================== */
+
+/* ==================================================
+   SUPABASE CONNECTION
+================================================== */
+
 
 const SUPABASE_URL =
     "https://rgcwzrikijrtywuhslwd.supabase.co";
 
+
 const SUPABASE_KEY =
     "sb_publishable_wg8Hxz9ac5n4j8qzhfkY-w_LuRTJS0Q";
+
 
 const supabaseClient =
     window.supabase.createClient(
@@ -434,11 +479,13 @@ const supabaseClient =
     );
 
 
-/* ==============================
-   SHOW PASSWORD
-============================== */
 
-function showPassword(){
+/* ==================================================
+   PASSWORD SHOW / HIDE
+================================================== */
+
+
+function togglePassword(){
 
     const password =
         document.getElementById("password");
@@ -450,12 +497,14 @@ function showPassword(){
     if(password.type === "password"){
 
         password.type = "text";
+
         eye.innerText = "🙈";
 
     }
     else{
 
         password.type = "password";
+
         eye.innerText = "👁️";
 
     }
@@ -463,11 +512,32 @@ function showPassword(){
 }
 
 
-/* ==============================
+
+/* ==================================================
+   SHOW ERROR
+================================================== */
+
+
+function showError(message){
+
+    const error =
+        document.getElementById("error");
+
+    error.className = "";
+
+    error.innerText = message;
+
+}
+
+
+
+/* ==================================================
    LOGIN
-============================== */
+================================================== */
+
 
 async function login(){
+
 
     const clientID =
         document
@@ -483,103 +553,178 @@ async function login(){
         .value;
 
 
-    const errorBox =
-        document.getElementById("error");
-
-
     const button =
-        document.getElementById("loginButton");
+        document.getElementById(
+            "loginButton"
+        );
+
+
+    const errorBox =
+        document.getElementById(
+            "error"
+        );
 
 
     errorBox.innerText = "";
 
+    errorBox.className = "";
+
+
+
+    /* EMPTY CLIENT ID */
 
     if(clientID === ""){
 
-        errorBox.innerText =
-            "Client ID enter karo.";
+        showError(
+            "Client ID enter karo."
+        );
 
         return;
 
     }
 
+
+
+    /* EMPTY PASSWORD */
 
     if(password === ""){
 
-        errorBox.innerText =
-            "Password enter karo.";
+        showError(
+            "Password enter karo."
+        );
 
         return;
 
     }
 
 
+
     button.disabled = true;
-    button.innerText = "LOGIN...";
+
+    button.innerText = "CHECKING...";
+
 
 
     try{
 
-        /*
-           CLIENT ID se client ki email
-           database se nikalenge
-        */
 
-        const { data: client, error:clientError } =
+        /* ==========================================
+           1. CLIENT ID DATABASE ME CHECK
+        ========================================== */
+
+
+        const result =
             await supabaseClient
             .from("karan")
-            .select("client_id, client_name, auth_email, active")
-            .eq("client_id", clientID)
-            .eq("active", true)
+            .select(
+                "client_id, client_name, auth_email, active"
+            )
+            .eq(
+                "client_id",
+                clientID
+            )
             .maybeSingle();
+
+
+        const client =
+            result.data;
+
+
+        const clientError =
+            result.error;
 
 
         if(clientError){
 
-            console.error(clientError);
+            console.error(
+                "Database Error:",
+                clientError
+            );
 
             throw new Error(
-                "Client database check failed."
+                "Database connection error."
             );
 
         }
 
+
+
+        /* CLIENT NOT FOUND */
 
         if(!client){
 
             throw new Error(
-                "Client ID not found or inactive."
+                "Client ID not found."
             );
 
         }
 
 
-        if(!client.auth_email){
+
+        /* CLIENT INACTIVE */
+
+        if(client.active !== true){
 
             throw new Error(
-                "Client login email not configured."
+                "This client account is inactive."
             );
 
         }
 
 
-        /*
-           Supabase Auth login
-        */
 
-        const { data:authData, error:authError } =
-            await supabaseClient.auth.signInWithPassword({
+        /* EMAIL MISSING */
 
-                email:client.auth_email,
+        if(
+            !client.auth_email ||
+            client.auth_email.trim() === ""
+        ){
 
-                password:password
+            throw new Error(
+                "Client login is not configured."
+            );
+
+        }
+
+
+
+        /* ==========================================
+           2. SUPABASE AUTH LOGIN
+        ========================================== */
+
+
+        button.innerText =
+            "VERIFYING...";
+
+
+        const authResult =
+            await supabaseClient
+            .auth
+            .signInWithPassword({
+
+                email:
+                    client.auth_email.trim(),
+
+                password:
+                    password
 
             });
 
 
+        const authData =
+            authResult.data;
+
+
+        const authError =
+            authResult.error;
+
+
         if(authError){
 
-            console.error(authError);
+            console.error(
+                "Auth Error:",
+                authError
+            );
 
             throw new Error(
                 "Invalid Client ID or Password."
@@ -588,10 +733,11 @@ async function login(){
         }
 
 
-        /*
-           Save client information
-           for dashboard
-        */
+
+        /* ==========================================
+           3. SAVE CLIENT SESSION INFO
+        ========================================== */
+
 
         localStorage.setItem(
             "pf_client_id",
@@ -611,35 +757,68 @@ async function login(){
         );
 
 
-        /*
-           Go dashboard
-        */
 
-        window.location.href =
-            "dashboard.html";
+        /* ==========================================
+           4. LOGIN SUCCESS
+        ========================================== */
+
+
+        button.innerText =
+            "SUCCESS ✓";
+
+
+        errorBox.className =
+            "success";
+
+
+        errorBox.innerText =
+            "Login successful. Opening dashboard...";
+
+
+        setTimeout(
+            function(){
+
+                window.location.href =
+                    "dashboard.html";
+
+            },
+            500
+        );
+
 
     }
 
 
     catch(error){
 
-        console.error(error);
 
-        errorBox.innerText =
+        console.error(
+            "Login Error:",
+            error
+        );
+
+
+        showError(
             error.message ||
-            "Login failed.";
+            "Login failed."
+        );
+
 
         button.disabled = false;
-        button.innerText = "LOGIN";
+
+        button.innerText =
+            "LOGIN";
 
     }
 
 }
 
 
-/* ==============================
+
+/* ==================================================
    ENTER KEY
-============================== */
+================================================== */
+
 
 document
 .getElementById("password")
@@ -655,6 +834,23 @@ document
 
     }
 );
+
+
+document
+.getElementById("clientID")
+.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            login();
+
+        }
+
+    }
+);
+
 
 </script>
 
