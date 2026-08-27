@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>PF TOOL - Karan Vaghela</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-
 *{
     margin:0;
     padding:0;
@@ -231,7 +225,6 @@ label{
 
 .login-button:disabled{
     opacity:.6;
-    cursor:wait;
 }
 
 #error{
@@ -258,17 +251,19 @@ label{
 
     .login-container{
         flex-direction:column;
-        min-height:auto;
+    }
+
+    .brand-panel,
+    .login-panel{
+        width:100%;
     }
 
     .brand-panel{
-        width:100%;
         min-height:400px;
         padding:35px 20px;
     }
 
     .login-panel{
-        width:100%;
         padding:40px 25px;
     }
 
@@ -288,31 +283,22 @@ label{
     .features{
         flex-wrap:wrap;
     }
-
 }
-
 </style>
-
 </head>
 
 <body>
 
-
 <div class="login-container">
-
-
-    <!-- LEFT -->
 
     <div class="brand-panel">
 
         <div class="brand-content">
 
             <div class="logo-circle">
-
                 <div class="logo-pf">
                     <span class="logo-p">P</span><span class="logo-f">F</span>
                 </div>
-
             </div>
 
             <div class="brand-title">
@@ -340,8 +326,6 @@ label{
     </div>
 
 
-    <!-- RIGHT -->
-
     <div class="login-panel">
 
         <div class="login-content">
@@ -365,8 +349,7 @@ label{
                     type="text"
                     id="clientID"
                     placeholder="Enter Client ID"
-                    autocomplete="username"
-                    spellcheck="false">
+                    autocomplete="username">
 
             </div>
 
@@ -421,26 +404,33 @@ label{
 
 <script>
 
-
 /* =========================================
-   SUPABASE CONNECTION
+   CLIENT LOGIN LIST
+   YAHAN AAP CLIENT ADD KAROGE
 ========================================= */
 
-const SUPABASE_URL =
-    "https://rgcwzrikijrtywuhslwd.supabase.co";
+const CLIENTS = {
 
-const SUPABASE_KEY =
-    "sb_publishable_wg8Hxz9ac5n4j8qzhfkY-w_LuRTJS0Q";
+    "CLIENT001": {
+        password: "Karan@786",
+        name: "Alphengineers"
+    },
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+    "CLIENT002": {
+        password: "ABC@123",
+        name: "ABC Company"
+    },
+
+    "CLIENT003": {
+        password: "XYZ@123",
+        name: "XYZ Company"
+    }
+
+};
 
 
 /* =========================================
-   SHOW / HIDE PASSWORD
+   PASSWORD SHOW / HIDE
 ========================================= */
 
 function togglePassword(){
@@ -451,14 +441,12 @@ function togglePassword(){
     const eye =
         document.getElementById("eye");
 
-
     if(password.type === "password"){
 
         password.type = "text";
         eye.innerText = "🙈";
 
-    }
-    else{
+    }else{
 
         password.type = "password";
         eye.innerText = "👁️";
@@ -469,40 +457,37 @@ function togglePassword(){
 
 
 /* =========================================
-   LOGIN TEST
+   LOGIN
 ========================================= */
 
-async function login(){
+function login(){
 
     const clientID =
         document
         .getElementById("clientID")
         .value
-        .trim();
+        .trim()
+        .toUpperCase();
 
     const password =
         document
         .getElementById("password")
         .value;
 
+    const error =
+        document.getElementById("error");
+
     const button =
-        document.getElementById(
-            "loginButton"
-        );
-
-    const errorBox =
-        document.getElementById(
-            "error"
-        );
+        document.getElementById("loginButton");
 
 
-    errorBox.innerText = "";
-    errorBox.className = "";
+    error.innerText = "";
+    error.className = "";
 
 
     if(clientID === ""){
 
-        errorBox.innerText =
+        error.innerText =
             "Client ID enter karo.";
 
         return;
@@ -512,7 +497,7 @@ async function login(){
 
     if(password === ""){
 
-        errorBox.innerText =
+        error.innerText =
             "Password enter karo.";
 
         return;
@@ -521,114 +506,75 @@ async function login(){
 
 
     button.disabled = true;
-    button.innerText = "LOGIN...";
+    button.innerText = "CHECKING...";
 
 
-    try{
+    const client =
+        CLIENTS[clientID];
 
 
-        /*
-           TEMPORARY AUTH TEST
+    if(!client){
 
-           Abhi Client ID database se
-           verify nahi kar rahe.
-
-           Sirf Supabase Auth test kar rahe hain.
-        */
-
-        const result =
-            await supabaseClient.auth
-            .signInWithPassword({
-
-                email:
-                    "karandarjipk@gmail.com",
-
-                password:
-                    password
-
-            });
-
-
-        if(result.error){
-
-            console.error(
-                "SUPABASE ERROR:",
-                result.error
-            );
-
-            throw result.error;
-
-        }
-
-
-        /*
-           Save login information
-        */
-
-        localStorage.setItem(
-            "pf_client_id",
-            clientID.toUpperCase()
-        );
-
-
-        localStorage.setItem(
-            "pf_auth_email",
-            "karandarjipk@gmail.com"
-        );
-
-
-        /*
-           SUCCESS
-        */
-
-        errorBox.className =
-            "success";
-
-        errorBox.innerText =
-            "SUPABASE LOGIN SUCCESS ✓";
-
-
-        button.innerText =
-            "SUCCESS ✓";
-
-
-        /*
-           TEMPORARY:
-           Dashboard open after success
-        */
-
-        setTimeout(
-            function(){
-
-                window.location.href =
-                    "dashboard.html";
-
-            },
-            700
-        );
-
-
-    }
-    catch(error){
-
-        console.error(
-            "LOGIN ERROR:",
-            error
-        );
-
-
-        errorBox.innerText =
-            "Login Error: " +
-            (
-                error.message ||
-                "Login failed"
-            );
-
+        error.innerText =
+            "Invalid Client ID.";
 
         button.disabled = false;
         button.innerText = "LOGIN";
 
+        return;
+
     }
+
+
+    if(client.password !== password){
+
+        error.innerText =
+            "Invalid Password.";
+
+        button.disabled = false;
+        button.innerText = "LOGIN";
+
+        return;
+
+    }
+
+
+    /* SAVE LOGIN */
+
+    localStorage.setItem(
+        "pf_logged_in",
+        "true"
+    );
+
+    localStorage.setItem(
+        "pf_client_id",
+        clientID
+    );
+
+    localStorage.setItem(
+        "pf_client_name",
+        client.name
+    );
+
+
+    /* SUCCESS */
+
+    error.className = "success";
+
+    error.innerText =
+        "Login successful ✓";
+
+
+    button.innerText =
+        "OPENING...";
+
+
+    setTimeout(function(){
+
+        window.location.href =
+            "dashboard.html";
+
+    },500);
 
 }
 
@@ -644,14 +590,11 @@ document
     function(event){
 
         if(event.key === "Enter"){
-
             login();
-
         }
 
     }
 );
-
 
 document
 .getElementById("clientID")
@@ -660,9 +603,7 @@ document
     function(event){
 
         if(event.key === "Enter"){
-
             login();
-
         }
 
     }
@@ -671,5 +612,4 @@ document
 </script>
 
 </body>
-
 </html>
