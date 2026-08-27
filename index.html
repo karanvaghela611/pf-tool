@@ -4,625 +4,285 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>PF TOOL - Karan Vaghela</title>
 
-<style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-/* =========================
-   BASIC
-========================= */
+<style>
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-
     min-height:100vh;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eaf2fb,
-            #f8fbff
-        );
-
+    background:linear-gradient(135deg,#eaf2fb,#f8fbff);
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     padding:20px;
-
 }
-
-
-/* =========================
-   MAIN CONTAINER
-========================= */
 
 .login-container{
-
     width:1100px;
-
     max-width:100%;
-
     min-height:650px;
-
     background:white;
-
     border-radius:25px;
-
     overflow:hidden;
-
     display:flex;
-
-    box-shadow:
-        0 25px 70px rgba(16,42,67,.18);
-
+    box-shadow:0 25px 70px rgba(16,42,67,.18);
 }
-
-
-/* =========================
-   LEFT BRAND PANEL
-========================= */
 
 .brand-panel{
-
     width:48%;
-
     background:
-        radial-gradient(
-            circle at 20% 20%,
-            rgba(255,255,255,.08),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #061e49,
-            #073a82,
-            #0057b8
-        );
-
+        radial-gradient(circle at 20% 20%,rgba(255,255,255,.08),transparent 30%),
+        linear-gradient(145deg,#061e49,#073a82,#0057b8);
     position:relative;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     text-align:center;
-
     padding:50px;
-
     overflow:hidden;
-
 }
 
-
-/* background decoration */
-
 .brand-panel::before{
-
     content:"";
-
     position:absolute;
-
     width:450px;
-
     height:450px;
-
     border-radius:50%;
-
     border:1px solid rgba(255,255,255,.08);
-
     right:-220px;
-
     bottom:-170px;
-
 }
 
 .brand-panel::after{
-
     content:"";
-
     position:absolute;
-
     width:350px;
-
     height:350px;
-
     border-radius:50%;
-
     border:1px solid rgba(255,255,255,.07);
-
     left:-230px;
-
     top:-160px;
-
 }
-
-
-/* =========================
-   BRAND CONTENT
-========================= */
 
 .brand-content{
-
     position:relative;
-
     z-index:2;
-
     color:white;
-
 }
-
-
-/* LOGO */
 
 .logo-circle{
-
     width:145px;
-
     height:145px;
-
     margin:0 auto 22px;
-
     border-radius:50%;
-
     background:white;
-
     border:7px solid #ff7a00;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.25);
-
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
-
-/* PF letters */
-
 .logo-pf{
-
     font-size:48px;
-
     font-weight:900;
-
     font-style:italic;
-
     letter-spacing:-6px;
-
 }
 
 .logo-p{
-
     color:#092d68;
-
 }
 
 .logo-f{
-
     color:#ff7300;
-
-    margin-left:2px;
-
 }
-
-
-/* TOOL */
 
 .brand-title{
-
     font-size:58px;
-
     line-height:1;
-
     font-weight:900;
-
     letter-spacing:2px;
-
-    color:white;
-
-    text-shadow:
-        0 4px 10px rgba(0,0,0,.2);
-
 }
-
-
-/* BY */
 
 .by-text{
-
     margin-top:13px;
-
     font-size:24px;
-
     font-weight:bold;
-
     font-style:italic;
-
-    color:white;
-
 }
-
-
-/* MOBILE */
 
 .mobile{
-
     margin-top:25px;
-
     font-size:20px;
-
     font-weight:bold;
-
-    color:white;
-
 }
-
-
-/* orange line */
 
 .orange-line{
-
     width:330px;
-
     max-width:100%;
-
     height:3px;
-
     background:#ff7900;
-
     margin:22px auto;
-
     border-radius:5px;
-
 }
-
-
-/* FEATURES */
 
 .features{
-
     display:flex;
-
     justify-content:center;
-
     gap:25px;
-
     margin-top:20px;
-
     font-size:15px;
-
     font-weight:bold;
-
 }
-
-.feature{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:6px;
-
-}
-
-
-/* =========================
-   RIGHT LOGIN
-========================= */
 
 .login-panel{
-
     width:52%;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     padding:60px;
-
     background:white;
-
 }
-
 
 .login-content{
-
     width:100%;
-
     max-width:440px;
-
 }
-
-
-/* WELCOME */
 
 .welcome{
-
     font-size:40px;
-
     font-weight:800;
-
     color:#102a5c;
-
     margin-bottom:8px;
-
 }
-
 
 .login-subtitle{
-
     color:#667085;
-
     font-size:18px;
-
     margin-bottom:40px;
-
 }
-
-
-/* LABEL */
 
 label{
-
     display:block;
-
     font-size:15px;
-
     font-weight:bold;
-
     color:#172b4d;
-
     margin-bottom:8px;
-
 }
-
-
-/* INPUT BOX */
 
 .input-box{
-
     position:relative;
-
     margin-bottom:25px;
-
 }
-
 
 .input-box input{
-
     width:100%;
-
     height:58px;
-
     border:1px solid #d5deea;
-
     border-radius:10px;
-
     padding:0 18px;
-
     font-size:16px;
-
     outline:none;
-
-    transition:.2s;
-
     background:#fbfcfe;
-
 }
-
 
 .input-box input:focus{
-
     border-color:#1769e0;
-
-    box-shadow:
-        0 0 0 3px rgba(23,105,224,.08);
-
+    box-shadow:0 0 0 3px rgba(23,105,224,.08);
     background:white;
-
 }
-
-
-/* PASSWORD */
 
 .password-input{
-
     padding-right:55px !important;
-
 }
-
 
 .eye{
-
     position:absolute;
-
     right:17px;
-
     top:50%;
-
     transform:translateY(-50%);
-
     cursor:pointer;
-
     font-size:20px;
-
-    color:#667085;
-
 }
-
-
-/* LOGIN BUTTON */
 
 .login-button{
-
     width:100%;
-
     height:58px;
-
     border:none;
-
     border-radius:10px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #092d68,
-            #1769e0
-        );
-
+    background:linear-gradient(90deg,#092d68,#1769e0);
     color:white;
-
     font-size:17px;
-
     font-weight:bold;
-
     cursor:pointer;
-
-    transition:.2s;
-
-    box-shadow:
-        0 8px 20px rgba(23,105,224,.22);
-
 }
 
-
-.login-button:hover{
-
-    transform:translateY(-1px);
-
-    box-shadow:
-        0 12px 25px rgba(23,105,224,.30);
-
+.login-button:disabled{
+    opacity:.6;
+    cursor:wait;
 }
-
-
-/* ERROR */
 
 #error{
-
     min-height:22px;
-
     margin-top:15px;
-
     text-align:center;
-
     color:#d92d20;
-
     font-size:14px;
-
     font-weight:bold;
-
 }
-
-
-/* FOOTER */
 
 .footer{
-
     margin-top:45px;
-
     text-align:center;
-
     color:#98a2b3;
-
     font-size:13px;
-
 }
-
-
-/* =========================
-   MOBILE
-========================= */
 
 @media(max-width:800px){
 
-    body{
-
-        padding:10px;
-
-    }
-
-
     .login-container{
-
         flex-direction:column;
-
         min-height:auto;
-
-        border-radius:18px;
-
     }
-
 
     .brand-panel{
-
         width:100%;
-
-        padding:35px 20px;
-
         min-height:400px;
-
+        padding:35px 20px;
     }
-
 
     .login-panel{
-
         width:100%;
-
         padding:40px 25px;
-
     }
-
 
     .brand-title{
-
         font-size:45px;
-
     }
-
 
     .logo-circle{
-
         width:120px;
-
         height:120px;
-
     }
-
 
     .welcome{
-
         font-size:32px;
-
     }
 
-
     .features{
-
-        gap:15px;
-
         flex-wrap:wrap;
-
     }
 
 }
@@ -631,84 +291,47 @@ label{
 
 </head>
 
-
 <body>
 
 
 <div class="login-container">
 
 
-    <!-- =========================
-         LEFT SIDE
-    ========================== -->
-
     <div class="brand-panel">
 
-
         <div class="brand-content">
-
-
-            <!-- LOGO -->
 
             <div class="logo-circle">
 
                 <div class="logo-pf">
-
                     <span class="logo-p">P</span><span class="logo-f">F</span>
-
                 </div>
 
             </div>
 
-
-            <!-- NAME -->
-
             <div class="brand-title">
-
                 PF TOOL
-
             </div>
-
-
-            <!-- OWNER -->
 
             <div class="by-text">
-
                 by Karan Vaghela
-
             </div>
-
-
-            <!-- MOBILE -->
 
             <div class="mobile">
-
                 📱 9574140727
-
             </div>
-
 
             <div class="orange-line"></div>
 
-
-            <!-- FEATURES -->
-
             <div class="features">
 
-                <div class="feature">
-                    🛡️ Secure
-                </div>
+                <div>🛡️ Secure</div>
 
-                <div class="feature">
-                    ⚡ Fast
-                </div>
+                <div>⚡ Fast</div>
 
-                <div class="feature">
-                    ✓ Reliable
-                </div>
+                <div>✓ Reliable</div>
 
             </div>
-
 
         </div>
 
@@ -716,39 +339,22 @@ label{
 
 
 
-    <!-- =========================
-         RIGHT SIDE
-    ========================== -->
-
     <div class="login-panel">
-
 
         <div class="login-content">
 
-
             <div class="welcome">
-
                 Welcome Back!
-
             </div>
-
 
             <div class="login-subtitle">
-
                 Login to access your account
-
             </div>
 
 
-
-            <!-- CLIENT ID -->
-
             <label>
-
                 Client ID
-
             </label>
-
 
             <div class="input-box">
 
@@ -761,15 +367,9 @@ label{
             </div>
 
 
-
-            <!-- PASSWORD -->
-
             <label>
-
                 Password
-
             </label>
-
 
             <div class="input-box">
 
@@ -780,24 +380,19 @@ label{
                     placeholder="Enter Password"
                     autocomplete="current-password">
 
-
                 <span
                     class="eye"
-                    onclick="showPassword()"
-                    id="eye">
-
+                    id="eye"
+                    onclick="showPassword()">
                     👁️
-
                 </span>
 
             </div>
 
 
-
-            <!-- LOGIN -->
-
             <button
                 class="login-button"
+                id="loginButton"
                 onclick="login()">
 
                 LOGIN
@@ -805,27 +400,19 @@ label{
             </button>
 
 
-            <!-- ERROR -->
-
             <div id="error"></div>
 
-
-            <!-- FOOTER -->
 
             <div class="footer">
 
                 © 2026 PF TOOL<br>
-
                 by Karan Vaghela
 
             </div>
 
-
         </div>
 
-
     </div>
-
 
 </div>
 
@@ -833,36 +420,44 @@ label{
 
 <script>
 
+/* =====================================
+   SUPABASE CONNECTION
+===================================== */
 
-/* =========================
-   PASSWORD SHOW / HIDE
-========================= */
+const SUPABASE_URL =
+    "https://rgcwzrikijrtywuhslwd.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_wg8Hxz9ac5n4j8qzhfkY-w_LuRTJS0Q";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================
+   SHOW PASSWORD
+===================================== */
 
 function showPassword(){
 
     const password =
-        document.getElementById(
-            "password"
-        );
+        document.getElementById("password");
 
     const eye =
-        document.getElementById(
-            "eye"
-        );
+        document.getElementById("eye");
 
 
     if(password.type === "password"){
 
         password.type = "text";
-
         eye.innerText = "🙈";
 
-    }
-
-    else{
+    }else{
 
         password.type = "password";
-
         eye.innerText = "👁️";
 
     }
@@ -870,18 +465,18 @@ function showPassword(){
 }
 
 
-
-/* =========================
+/* =====================================
    LOGIN
-========================= */
+===================================== */
 
-function login(){
+async function login(){
 
     const clientID =
         document
         .getElementById("clientID")
         .value
-        .trim();
+        .trim()
+        .toUpperCase();
 
 
     const password =
@@ -891,42 +486,100 @@ function login(){
 
 
     const error =
-        document
-        .getElementById("error");
+        document.getElementById("error");
 
 
+    const button =
+        document.getElementById("loginButton");
 
-    /* DEMO LOGIN */
 
-    if(
+    error.innerText = "";
 
-        clientID === "CLIENT001"
 
-        &&
+    if(clientID === ""){
 
-        password === "1234"
+        error.innerText =
+            "Client ID enter karo.";
 
-    ){
+        return;
 
-        error.innerText = "";
+    }
+
+
+    if(password === ""){
+
+        error.innerText =
+            "Password enter karo.";
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+    button.innerText = "LOGIN...";
+
+
+    /*
+       CLIENT ID ko Auth email me convert kar rahe hain.
+
+       CLIENT001
+       ↓
+       client001@pftool.in
+    */
+
+    const email =
+        clientID.toLowerCase()
+        + "@pftool.in";
+
+
+    try{
+
+        const { data, error:loginError } =
+            await supabaseClient.auth.signInWithPassword({
+
+                email:email,
+
+                password:password
+
+            });
+
+
+        if(loginError){
+
+            throw loginError;
+
+        }
+
+
+        /*
+           Login successful
+        */
 
         window.location.href =
             "dashboard.html";
 
+
     }
 
-    else{
+    catch(error){
 
-        error.innerText =
-            "Invalid Client ID or Password";
+        console.error(error);
+
+        document
+        .getElementById("error")
+        .innerText =
+            "Invalid Client ID or Password.";
+
+        button.disabled = false;
+        button.innerText = "LOGIN";
 
     }
 
 }
 
 
-
-/* ENTER KEY LOGIN */
+/* ENTER KEY */
 
 document
 .getElementById("password")
