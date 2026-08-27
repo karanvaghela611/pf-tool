@@ -4,151 +4,427 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>PF TOOL - ECR Generator</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PF TOOL - Dashboard</title>
+
+<!-- Excel Reading Library -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
 
 *{
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-    margin:0;
-    background:#f4f6f8;
+    background:#f3f6fa;
     color:#17202a;
 }
 
-/* HEADER */
+
+/* ================= HEADER ================= */
 
 header{
-    height:65px;
-    background:#102a43;
+
+    height:68px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #071f49,
+            #0d4380,
+            #1769e0
+        );
+
     color:white;
 
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
 
     padding:0 25px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.15);
+
 }
 
-.logo{
-    font-size:23px;
-    font-weight:bold;
+.header-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+}
+
+.header-logo{
+
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+
+    background:white;
+
+    border:3px solid #ff7900;
+
+    color:#092d68;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:19px;
+
+    font-weight:900;
+
+}
+
+.header-name{
+
+    font-size:22px;
+
+    font-weight:900;
+
     letter-spacing:1px;
+
 }
 
-.subtitle{
-    font-size:13px;
-    color:#b8c7d9;
-    margin-left:10px;
+.header-by{
+
+    font-size:12px;
+
+    color:#dce8f7;
+
+}
+
+.header-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.contact{
+
+    font-size:14px;
+
+    font-weight:bold;
+
 }
 
 .logout{
+
     background:white;
+
     color:#102a43;
+
     border:none;
-    padding:9px 15px;
+
     border-radius:7px;
-    cursor:pointer;
+
+    padding:9px 16px;
+
     font-weight:bold;
+
+    cursor:pointer;
+
 }
 
 
-/* MAIN */
+/* ================= LAYOUT ================= */
 
-main{
-    padding:25px;
-    max-width:1600px;
-    margin:auto;
-}
+.layout{
 
-
-/* TOP */
-
-.top{
     display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
-}
 
-h2{
-    margin:0;
-    font-size:23px;
+    min-height:calc(100vh - 68px);
+
 }
 
 
-/* BUTTONS */
+/* ================= SIDEBAR ================= */
 
-button{
-    border:none;
-    border-radius:7px;
-    padding:11px 17px;
+.sidebar{
 
-    background:#1769e0;
+    width:220px;
+
+    background:#092d68;
+
     color:white;
 
-    font-weight:bold;
+    padding:22px 12px;
+
+}
+
+.menu-title{
+
+    font-size:11px;
+
+    color:#a9bed8;
+
+    padding:10px 12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+}
+
+.menu{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:7px;
+
+    background:transparent;
+
+    color:white;
+
+    text-align:left;
+
     cursor:pointer;
+
+    margin-bottom:5px;
+
+    font-size:14px;
+
 }
 
-button:hover{
-    opacity:.9;
-}
+.menu:hover,
+.menu.active{
 
-.add{
-    background:#475467;
-    margin-right:8px;
-}
+    background:#1769e0;
 
-.generate{
-    background:#087443;
 }
 
 
-/* NOTICE */
+/* ================= CONTENT ================= */
 
-.notice{
-    background:#eef4ff;
+.content{
 
-    border:1px solid #c7d7fe;
+    flex:1;
 
-    padding:13px 15px;
+    padding:25px;
 
-    border-radius:8px;
+    min-width:0;
+
+}
+
+.page-title{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.page-title h1{
+
+    font-size:26px;
+
+    color:#102a43;
+
+}
+
+.page-title p{
+
+    color:#667085;
 
     font-size:13px;
 
-    margin-bottom:15px;
+    margin-top:5px;
+
 }
 
 
-/* TABLE */
+/* ================= STAT BOXES ================= */
 
-.table-box{
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.stat{
+
     background:white;
 
     border-radius:10px;
 
-    overflow-x:auto;
+    padding:18px;
 
-    box-shadow:0 3px 15px rgba(0,0,0,.06);
+    box-shadow:
+        0 3px 14px rgba(0,0,0,.06);
+
+    border-left:4px solid #1769e0;
+
+}
+
+.stat-title{
+
+    color:#667085;
+
+    font-size:12px;
+
+    margin-bottom:7px;
+
+}
+
+.stat-number{
+
+    font-size:25px;
+
+    font-weight:800;
+
+    color:#102a43;
+
+}
+
+
+/* ================= TOOLBAR ================= */
+
+.toolbar{
+
+    background:white;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:15px;
+
+    box-shadow:
+        0 3px 14px rgba(0,0,0,.05);
+
+}
+
+.toolbar-left,
+.toolbar-right{
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+}
+
+button.action{
+
+    border:none;
+
+    padding:10px 15px;
+
+    border-radius:7px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+.upload{
+
+    background:#1769e0;
+
+    color:white;
+
+}
+
+.add{
+
+    background:#475467;
+
+    color:white;
+
+}
+
+.generate{
+
+    background:#087443;
+
+    color:white;
+
+}
+
+.clear{
+
+    background:#d92d20;
+
+    color:white;
+
+}
+
+
+/* ================= TABLE ================= */
+
+.table-box{
+
+    background:white;
+
+    border-radius:10px;
+
+    overflow:auto;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,.06);
+
 }
 
 table{
+
     width:100%;
 
-    min-width:1350px;
+    min-width:1450px;
 
     border-collapse:collapse;
+
 }
 
 th{
-    background:#e9eef5;
+
+    background:#e8eef6;
+
+    color:#344054;
 
     padding:12px 8px;
 
@@ -157,20 +433,24 @@ th{
     white-space:nowrap;
 
     border-bottom:1px solid #d0d5dd;
+
 }
 
 td{
+
     padding:5px;
 
     border-bottom:1px solid #eaecf0;
 
     text-align:center;
+
 }
 
 td input{
+
     width:100%;
 
-    min-width:110px;
+    min-width:105px;
 
     padding:9px;
 
@@ -181,16 +461,17 @@ td input{
     outline:none;
 
     font-size:13px;
+
 }
 
 td input:focus{
+
     border-color:#1769e0;
+
 }
 
+.calc{
 
-/* CALCULATED */
-
-.calculated{
     background:#f8fafc;
 
     font-size:13px;
@@ -198,39 +479,128 @@ td input:focus{
     font-weight:bold;
 
     white-space:nowrap;
+
 }
 
-
-/* DELETE */
-
 .delete{
+
     background:#d92d20;
+
+    color:white;
+
+    border:none;
+
+    border-radius:6px;
 
     padding:8px 11px;
 
-    font-size:14px;
+    cursor:pointer;
+
+    font-weight:bold;
+
 }
 
 
-/* FOOTER */
+/* ================= FOOTER ================= */
 
-.footer{
-    margin-top:18px;
+.bottom{
+
+    margin-top:15px;
 
     display:flex;
 
     justify-content:space-between;
 
-    align-items:center;
-
     color:#667085;
 
-    font-size:13px;
+    font-size:12px;
+
 }
 
-.employee-count{
-    font-weight:bold;
-    color:#344054;
+
+/* ================= HIDDEN FILE ================= */
+
+#excelFile{
+
+    display:none;
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+
+    .sidebar{
+
+        width:65px;
+
+    }
+
+    .menu-title{
+
+        display:none;
+
+    }
+
+    .menu{
+
+        text-align:center;
+
+        font-size:0;
+
+    }
+
+    .menu:first-letter{
+
+        font-size:18px;
+
+    }
+
+    .stats{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .contact{
+
+        display:none;
+
+    }
+
+}
+
+@media(max-width:600px){
+
+    .stats{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .toolbar{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+    .toolbar-left,
+    .toolbar-right{
+
+        width:100%;
+
+    }
+
+    .toolbar button{
+
+        flex:1;
+
+    }
+
 }
 
 </style>
@@ -241,199 +611,387 @@ td input:focus{
 <body>
 
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
 
 <header>
 
-    <div>
 
-        <span class="logo">
-            PF TOOL
-        </span>
+    <div class="header-left">
 
-        <span class="subtitle">
-            ECR Text File Generator
-        </span>
+
+        <div class="header-logo">
+
+            PF
+
+        </div>
+
+
+        <div>
+
+            <div class="header-name">
+
+                PF TOOL
+
+            </div>
+
+            <div class="header-by">
+
+                by Karan Vaghela
+
+            </div>
+
+        </div>
+
 
     </div>
 
 
-    <button
-        class="logout"
-        onclick="logout()">
+    <div class="header-right">
 
-        LOGOUT
 
-    </button>
+        <div class="contact">
+
+            📱 9574140727
+
+        </div>
+
+
+        <button
+            class="logout"
+            onclick="logout()">
+
+            LOGOUT
+
+        </button>
+
+
+    </div>
+
 
 </header>
 
 
 
-<!-- MAIN -->
+<!-- ================= LAYOUT ================= -->
 
-<main>
-
-
-    <div class="top">
-
-        <h2>
-            Employee Details
-        </h2>
+<div class="layout">
 
 
-        <div>
+    <!-- SIDEBAR -->
 
-            <button
-                class="add"
-                onclick="addRow()">
-
-                + ADD ROW
-
-            </button>
+    <aside class="sidebar">
 
 
-            <button
-                class="generate"
-                onclick="generateTXT()">
+        <div class="menu-title">
 
-                GENERATE TXT
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-
-    <div class="notice">
-
-        <b>Manual Entry:</b>
-
-        UAN, Member Name, Gross Wages
-        and EPF Wages.
-
-        <br><br>
-
-        <b>Automatic:</b>
-
-        EPS Wages, EDLI Wages,
-        EPF Contribution,
-        EPS Contribution
-        and EPF EPS Difference.
-
-    </div>
-
-
-
-    <!-- TABLE -->
-
-    <div class="table-box">
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>
-                        UAN
-                    </th>
-
-                    <th>
-                        MEMBER NAME
-                    </th>
-
-                    <th>
-                        GROSS WAGES
-                    </th>
-
-                    <th>
-                        EPF WAGES
-                    </th>
-
-                    <th>
-                        EPS WAGES
-                    </th>
-
-                    <th>
-                        EDLI WAGES
-                    </th>
-
-                    <th>
-                        EPF CONTRI.
-                    </th>
-
-                    <th>
-                        EPS CONTRI.
-                    </th>
-
-                    <th>
-                        EPF EPS DIFF
-                    </th>
-
-                    <th>
-                        NCP DAYS
-                    </th>
-
-                    <th>
-                        REFUND
-                    </th>
-
-                    <th>
-                        DELETE
-                    </th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody id="employeeTable">
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-
-
-    <!-- FOOTER -->
-
-    <div class="footer">
-
-        <div class="employee-count">
-
-            Employees:
-            <span id="count">0</span>
+            MENU
 
         </div>
 
 
-        <div>
+        <button
+            class="menu active"
+            onclick="showDashboard()">
 
-            PF TOOL ECR Generator
+            🏠 Dashboard
+
+        </button>
+
+
+        <button
+            class="menu"
+            onclick="openExcel()">
+
+            📊 Excel Upload
+
+        </button>
+
+
+        <button
+            class="menu"
+            onclick="focusEntry()">
+
+            ✏️ Manual Entry
+
+        </button>
+
+
+        <button
+            class="menu"
+            onclick="generateTXT()">
+
+            📄 Generate TXT
+
+        </button>
+
+
+        <button
+            class="menu"
+            onclick="clearAll()">
+
+            🗑️ Clear All
+
+        </button>
+
+
+    </aside>
+
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <!-- TITLE -->
+
+        <div class="page-title">
+
+            <div>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Manage employee details
+                </p>
+
+            </div>
 
         </div>
 
-    </div>
 
 
-</main>
+        <!-- STATS -->
+
+        <div class="stats">
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    TOTAL EMPLOYEES
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="totalEmployees">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    VALID RECORDS
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="validRecords">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    TOTAL EPF WAGES
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="totalEPF">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    TOTAL NCP DAYS
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="totalNCP">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- TOOLBAR -->
+
+        <div class="toolbar">
+
+
+            <div class="toolbar-left">
+
+
+                <input
+                    type="file"
+                    id="excelFile"
+                    accept=".xlsx,.xls"
+                    onchange="uploadExcel(event)">
+
+
+                <button
+                    class="action upload"
+                    onclick="openExcel()">
+
+                    📊 UPLOAD EXCEL
+
+                </button>
+
+
+                <button
+                    class="action add"
+                    onclick="addRow()">
+
+                    + ADD ROW
+
+                </button>
+
+
+            </div>
+
+
+
+            <div class="toolbar-right">
+
+
+                <button
+                    class="action clear"
+                    onclick="clearAll()">
+
+                    CLEAR ALL
+
+                </button>
+
+
+                <button
+                    class="action generate"
+                    onclick="generateTXT()">
+
+                    GENERATE TXT
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- TABLE -->
+
+        <div class="table-box">
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>UAN</th>
+
+                        <th>MEMBER NAME</th>
+
+                        <th>GROSS WAGES</th>
+
+                        <th>EPF WAGES</th>
+
+                        <th>EPS WAGES</th>
+
+                        <th>EDLI WAGES</th>
+
+                        <th>EPF CONTRI.</th>
+
+                        <th>EPS CONTRI.</th>
+
+                        <th>EPF EPS DIFF</th>
+
+                        <th>NCP DAYS</th>
+
+                        <th>REFUND OF ADVANCE</th>
+
+                        <th>DELETE</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="employeeTable">
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+
+        <div class="bottom">
+
+            <div>
+                Employees:
+                <b id="bottomCount">0</b>
+            </div>
+
+            <div>
+                PF TOOL • by Karan Vaghela
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+</div>
 
 
 
 <script>
 
 
-/* =========================================
+/* ==========================================
    ADD ROW
-========================================= */
+========================================== */
 
 
-function addRow(){
+function addRow(data={}){
+
 
     const table =
         document.getElementById(
@@ -447,12 +1005,16 @@ function addRow(){
 
     row.innerHTML = `
 
+        <td class="rowNumber"></td>
+
+
         <td>
 
             <input
                 type="text"
                 class="uan"
                 maxlength="12"
+                value="${escapeHTML(data.uan || "")}"
                 placeholder="UAN">
 
         </td>
@@ -463,6 +1025,7 @@ function addRow(){
             <input
                 type="text"
                 class="name"
+                value="${escapeHTML(data.name || "")}"
                 placeholder="Member Name">
 
         </td>
@@ -474,6 +1037,7 @@ function addRow(){
                 type="number"
                 class="gross"
                 min="0"
+                value="${data.gross ?? ""}"
                 placeholder="Gross"
                 oninput="calculate(this)">
 
@@ -486,44 +1050,35 @@ function addRow(){
                 type="number"
                 class="epfw"
                 min="0"
+                value="${data.epfw ?? ""}"
                 placeholder="EPF Wages"
                 oninput="calculate(this)">
 
         </td>
 
 
-        <td class="calculated epsw">
-
+        <td class="calc epsw">
             0
-
         </td>
 
 
-        <td class="calculated edli">
-
+        <td class="calc edli">
             0
-
         </td>
 
 
-        <td class="calculated epf">
-
+        <td class="calc epf">
             0
-
         </td>
 
 
-        <td class="calculated eps">
-
+        <td class="calc eps">
             0
-
         </td>
 
 
-        <td class="calculated diff">
-
+        <td class="calc diff">
             0
-
         </td>
 
 
@@ -534,7 +1089,7 @@ function addRow(){
                 class="ncp"
                 min="0"
                 max="31"
-                value="0">
+                value="${data.ncp ?? 0}">
 
         </td>
 
@@ -545,7 +1100,7 @@ function addRow(){
                 type="number"
                 class="refund"
                 min="0"
-                value="0">
+                value="${data.refund ?? 0}">
 
         </td>
 
@@ -568,18 +1123,24 @@ function addRow(){
     table.appendChild(row);
 
 
-    updateCount();
+    calculate(
+        row.querySelector(".epfw")
+    );
+
+
+    updateNumbers();
 
 }
 
 
 
-/* =========================================
-   CALCULATE PF
-========================================= */
+/* ==========================================
+   CALCULATION
+========================================== */
 
 
 function calculate(input){
+
 
     const row =
         input.closest("tr");
@@ -597,39 +1158,19 @@ function calculate(input){
         ) || 0;
 
 
-
     /*
        EPS WAGES
-
-       Gross > 29999
-       = 15000
-
-       Otherwise
-       = EPF Wages
     */
 
-
-    let epsw;
-
-
-    if(gross > 29999){
-
-        epsw = 15000;
-
-    }
-
-    else{
-
-        epsw = epfw;
-
-    }
-
+    const epsw =
+        gross > 29999
+        ? 15000
+        : epfw;
 
 
     /*
        EDLI WAGES
     */
-
 
     const edli =
         Math.min(
@@ -638,11 +1179,9 @@ function calculate(input){
         );
 
 
-
     /*
        EPF CONTRIBUTION
     */
-
 
     const epf =
         Math.ceil(
@@ -650,11 +1189,9 @@ function calculate(input){
         );
 
 
-
     /*
        EPS CONTRIBUTION
     */
-
 
     const rawEPS =
         epsw * 0.0833;
@@ -668,87 +1205,74 @@ function calculate(input){
         rawEPS - baseEPS;
 
 
-    let eps;
-
-
-    if(fraction <= 0.49){
-
-        eps = baseEPS;
-
-    }
-
-    else{
-
-        eps = baseEPS + 1;
-
-    }
-
+    const eps =
+        fraction <= 0.49
+        ? baseEPS
+        : baseEPS + 1;
 
 
     /*
-       EPF - EPS DIFFERENCE
+       DIFFERENCE
     */
-
 
     const diff =
         epf - eps;
 
 
-
-    /*
-       DISPLAY
-    */
+    row.querySelector(".epsw")
+       .innerText = epsw;
 
 
-    row.querySelector(".epsw").innerText =
-        epsw;
+    row.querySelector(".edli")
+       .innerText = edli;
 
 
-    row.querySelector(".edli").innerText =
-        edli;
+    row.querySelector(".epf")
+       .innerText = epf;
 
 
-    row.querySelector(".epf").innerText =
-        epf;
+    row.querySelector(".eps")
+       .innerText = eps;
 
 
-    row.querySelector(".eps").innerText =
-        eps;
+    row.querySelector(".diff")
+       .innerText = diff;
 
 
-    row.querySelector(".diff").innerText =
-        diff;
-
-
+    updateStats();
 
 }
 
 
 
-/* =========================================
-   DELETE ROW
-========================================= */
+/* ==========================================
+   DELETE
+========================================== */
 
 
 function deleteRow(button){
+
 
     button
         .closest("tr")
         .remove();
 
 
-    updateCount();
+    updateNumbers();
+
+    updateStats();
 
 }
 
 
 
-/* =========================================
-   COUNT
-========================================= */
+/* ==========================================
+   ROW NUMBERS
+========================================== */
 
 
-function updateCount(){
+function updateNumbers(){
+
 
     const rows =
         document.querySelectorAll(
@@ -756,18 +1280,558 @@ function updateCount(){
         );
 
 
+    rows.forEach(
+        (row,index)=>{
+
+            row.querySelector(
+                ".rowNumber"
+            ).innerText =
+                index + 1;
+
+        }
+    );
+
+
     document.getElementById(
-        "count"
+        "bottomCount"
     ).innerText =
         rows.length;
+
+
+    document.getElementById(
+        "totalEmployees"
+    ).innerText =
+        rows.length;
+
+
+    updateStats();
 
 }
 
 
 
-/* =========================================
+/* ==========================================
+   STATS
+========================================== */
+
+
+function updateStats(){
+
+
+    const rows =
+        document.querySelectorAll(
+            "#employeeTable tr"
+        );
+
+
+    let valid = 0;
+
+    let totalEPF = 0;
+
+    let totalNCP = 0;
+
+
+    rows.forEach(row=>{
+
+
+        const uan =
+            row.querySelector(
+                ".uan"
+            ).value.trim();
+
+
+        const name =
+            row.querySelector(
+                ".name"
+            ).value.trim();
+
+
+        const epfw =
+            Number(
+                row.querySelector(
+                    ".epfw"
+                ).value
+            ) || 0;
+
+
+        const ncp =
+            Number(
+                row.querySelector(
+                    ".ncp"
+                ).value
+            ) || 0;
+
+
+        if(
+            /^\d{12}$/.test(uan)
+            &&
+            name !== ""
+            &&
+            epfw > 0
+        ){
+
+            valid++;
+
+        }
+
+
+        totalEPF += epfw;
+
+        totalNCP += ncp;
+
+
+    });
+
+
+    document.getElementById(
+        "validRecords"
+    ).innerText =
+        valid;
+
+
+    document.getElementById(
+        "totalEPF"
+    ).innerText =
+        formatNumber(totalEPF);
+
+
+    document.getElementById(
+        "totalNCP"
+    ).innerText =
+        totalNCP;
+
+
+}
+
+
+
+/* ==========================================
+   EXCEL UPLOAD
+========================================== */
+
+
+function openExcel(){
+
+    document
+        .getElementById("excelFile")
+        .click();
+
+}
+
+
+
+/* ==========================================
+   READ EXCEL
+========================================== */
+
+
+function uploadExcel(event){
+
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function(e){
+
+
+            try{
+
+
+                const data =
+                    new Uint8Array(
+                        e.target.result
+                    );
+
+
+                const workbook =
+                    XLSX.read(
+                        data,
+                        {
+                            type:"array"
+                        }
+                    );
+
+
+                const sheet =
+                    workbook.Sheets[
+                        workbook.SheetNames[0]
+                    ];
+
+
+                const rows =
+                    XLSX.utils.sheet_to_json(
+                        sheet,
+                        {
+                            defval:"",
+                            raw:true
+                        }
+                    );
+
+
+                if(rows.length === 0){
+
+                    alert(
+                        "Excel me data nahi mila."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                   Clear current data
+                */
+
+                document.getElementById(
+                    "employeeTable"
+                ).innerHTML = "";
+
+
+                let imported = 0;
+
+
+                rows.forEach(
+                    excelRow=>{
+
+
+                        const normalized =
+                            {};
+
+
+                        Object.keys(
+                            excelRow
+                        ).forEach(
+                            key=>{
+
+                                normalized[
+                                    normalizeHeader(key)
+                                ] =
+                                    excelRow[key];
+
+                            }
+                        );
+
+
+                        const uan =
+                            getValue(
+                                normalized,
+                                [
+                                    "uan",
+                                    "uan number"
+                                ]
+                            );
+
+
+                        const name =
+                            getValue(
+                                normalized,
+                                [
+                                    "member name",
+                                    "name",
+                                    "employee name"
+                                ]
+                            );
+
+
+                        const gross =
+                            getValue(
+                                normalized,
+                                [
+                                    "gross wages",
+                                    "gross"
+                                ]
+                            );
+
+
+                        const epfw =
+                            getValue(
+                                normalized,
+                                [
+                                    "epf wages",
+                                    "epfwages"
+                                ]
+                            );
+
+
+                        const ncp =
+                            getValue(
+                                normalized,
+                                [
+                                    "ncp days",
+                                    "ncp",
+                                    "ncp days&"
+                                ]
+                            );
+
+
+                        const refund =
+                            getValue(
+                                normalized,
+                                [
+                                    "refund of advance",
+                                    "refund",
+                                    "refund of advance "
+                                ]
+                            );
+
+
+                        /*
+                           Ignore completely empty row
+                        */
+
+                        if(
+                            String(uan).trim()==="" &&
+                            String(name).trim()==="" &&
+                            String(gross).trim()==="" &&
+                            String(epfw).trim()===""
+                        ){
+
+                            return;
+
+                        }
+
+
+                        addRow({
+
+                            uan:
+                                cleanNumberText(uan),
+
+                            name:
+                                String(name),
+
+                            gross:
+                                toNumber(gross),
+
+                            epfw:
+                                toNumber(epfw),
+
+                            ncp:
+                                toNumber(ncp),
+
+                            refund:
+                                toNumber(refund)
+
+                        });
+
+
+                        imported++;
+
+
+                    }
+                );
+
+
+                if(imported === 0){
+
+                    alert(
+                        "Required columns nahi mile.\n\nExcel headings ye hone chahiye:\nUAN\nMEMBER NAME\nGROSS WAGES\nEPF WAGES\nNCP DAYS\nREFUND OF ADVANCE"
+                    );
+
+                    return;
+
+                }
+
+
+                alert(
+                    imported +
+                    " employee(s) Excel se import ho gaye."
+                );
+
+
+            }
+
+            catch(error){
+
+                console.error(error);
+
+                alert(
+                    "Excel read nahi ho payi."
+                );
+
+            }
+
+
+            event.target.value = "";
+
+
+        };
+
+
+    reader.readAsArrayBuffer(file);
+
+}
+
+
+
+/* ==========================================
+   HEADER NORMALIZE
+========================================== */
+
+
+function normalizeHeader(value){
+
+    return String(value)
+        .toLowerCase()
+        .trim()
+        .replace(/&/g,"")
+        .replace(/\s+/g," ");
+
+}
+
+
+
+/* ==========================================
+   GET VALUE
+========================================== */
+
+
+function getValue(obj,names){
+
+
+    for(
+        const name of names
+    ){
+
+        if(
+            Object.prototype.hasOwnProperty.call(
+                obj,
+                name
+            )
+        ){
+
+            return obj[name];
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+
+/* ==========================================
+   NUMBER
+========================================== */
+
+
+function toNumber(value){
+
+    if(
+        value === null ||
+        value === undefined ||
+        value === ""
+    ){
+
+        return 0;
+
+    }
+
+
+    const n =
+        Number(
+            String(value)
+            .replace(/,/g,"")
+            .trim()
+        );
+
+
+    return isNaN(n)
+        ? 0
+        : n;
+
+}
+
+
+
+/* ==========================================
+   UAN TEXT
+========================================== */
+
+
+function cleanNumberText(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return "";
+
+    }
+
+
+    if(
+        typeof value === "number"
+    ){
+
+        return String(
+            Math.trunc(value)
+        );
+
+    }
+
+
+    return String(value)
+        .trim();
+
+}
+
+
+
+/* ==========================================
+   NUMBER FORMAT
+========================================== */
+
+
+function formatNumber(number){
+
+    return Number(number)
+        .toLocaleString(
+            "en-IN"
+        );
+
+}
+
+
+
+/* ==========================================
+   ESCAPE HTML
+========================================== */
+
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+
+/* ==========================================
    GENERATE TXT
-========================================= */
+========================================== */
 
 
 function generateTXT(){
@@ -782,7 +1846,7 @@ function generateTXT(){
     if(rows.length === 0){
 
         alert(
-            "Please add employee first."
+            "Employee data add karo."
         );
 
         return;
@@ -790,11 +1854,9 @@ function generateTXT(){
     }
 
 
-
     let txt = "";
 
     let count = 0;
-
 
 
     for(
@@ -874,9 +1936,8 @@ function generateTXT(){
 
 
         /*
-           SKIP EMPTY ROW
+           Skip completely empty rows
         */
-
 
         if(
 
@@ -894,25 +1955,16 @@ function generateTXT(){
 
 
         /*
-           VALIDATION
+           Validation
         */
 
-
-        if(uan === ""){
-
-            alert(
-                "UAN missing hai."
-            );
-
-            return;
-
-        }
-
-
-        if(!/^\d{12}$/.test(uan)){
+        if(
+            !/^\d{12}$/.test(uan)
+        ){
 
             alert(
-                "UAN exactly 12 digit hona chahiye."
+                "UAN 12 digit hona chahiye:\n"
+                + uan
             );
 
             return;
@@ -934,7 +1986,7 @@ function generateTXT(){
         if(epfw <= 0){
 
             alert(
-                "EPF Wages enter karo."
+                "EPF Wages missing hai."
             );
 
             return;
@@ -945,10 +1997,7 @@ function generateTXT(){
 
         /*
            ECR LINE
-
-           #~# separator
         */
-
 
         const line = [
 
@@ -967,7 +2016,6 @@ function generateTXT(){
         ].join("#~#");
 
 
-
         txt +=
             line +
             "\r\n";
@@ -979,11 +2027,10 @@ function generateTXT(){
     }
 
 
-
     if(count === 0){
 
         alert(
-            "Koi employee data nahi hai."
+            "Valid employee record nahi mila."
         );
 
         return;
@@ -993,29 +2040,23 @@ function generateTXT(){
 
 
     /*
-       CREATE TXT FILE
+       DOWNLOAD
     */
-
 
     const blob =
         new Blob(
-
             [txt],
-
             {
                 type:
-                "text/plain;charset=utf-8"
+                    "text/plain;charset=utf-8"
             }
-
         );
-
 
 
     const url =
         URL.createObjectURL(
             blob
         );
-
 
 
     const link =
@@ -1050,22 +2091,103 @@ function generateTXT(){
     );
 
 
-
     alert(
-
-        "PF_ECR.txt ready!\n\n" +
-        "Total Employees: " +
-        count
-
+        "PF_ECR.txt ready!\n\nEmployees: "
+        + count
     );
 
 }
 
 
 
-/* =========================================
+/* ==========================================
+   CLEAR ALL
+========================================== */
+
+
+function clearAll(){
+
+
+    if(
+        !confirm(
+            "Saara employee data delete karna hai?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "employeeTable"
+    ).innerHTML = "";
+
+
+    updateNumbers();
+
+}
+
+
+
+/* ==========================================
+   MANUAL ENTRY
+========================================== */
+
+
+function focusEntry(){
+
+
+    const rows =
+        document.querySelectorAll(
+            "#employeeTable tr"
+        );
+
+
+    if(rows.length === 0){
+
+        addRow();
+
+    }
+
+
+    const first =
+        document.querySelector(
+            "#employeeTable .uan"
+        );
+
+
+    if(first){
+
+        first.focus();
+
+    }
+
+}
+
+
+
+/* ==========================================
+   DASHBOARD
+========================================== */
+
+
+function showDashboard(){
+
+    window.scrollTo(
+        {
+            top:0,
+            behavior:"smooth"
+        }
+    );
+
+}
+
+
+
+/* ==========================================
    LOGOUT
-========================================= */
+========================================== */
 
 
 function logout(){
@@ -1077,14 +2199,14 @@ function logout(){
 
 
 
-/* =========================================
-   INITIAL ROWS
-========================================= */
+/* ==========================================
+   START
+========================================== */
 
 
 for(
-    let i = 0;
-    i < 5;
+    let i=0;
+    i<5;
     i++
 ){
 
@@ -1092,6 +2214,8 @@ for(
 
 }
 
+
+updateNumbers();
 
 </script>
 
