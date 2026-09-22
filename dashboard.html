@@ -1,2067 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>PF TOOL Dashboard</title>
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
-
-body{
-    background:#f3f7fc;
-    color:#172b4d;
-}
-
-/* ================= SIDEBAR ================= */
-
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    bottom:0;
-    width:245px;
-    background:linear-gradient(180deg,#071f48,#063c82,#075bb5);
-    color:#fff;
-    z-index:100;
-    display:flex;
-    flex-direction:column;
-}
-
-.logo-area{
-    text-align:center;
-    padding:24px 10px 18px;
-}
-
-.logo-circle{
-    width:88px;
-    height:88px;
-    border-radius:50%;
-    background:#fff;
-    border:5px solid #ff7900;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:auto;
-}
-
-.logo-pf{
-    font-size:34px;
-    font-weight:900;
-    font-style:italic;
-    letter-spacing:-5px;
-}
-
-.logo-p{
-    color:#092d68;
-}
-
-.logo-f{
-    color:#ff7300;
-}
-
-.logo-title{
-    font-size:28px;
-    font-weight:900;
-    margin-top:14px;
-}
-
-.logo-by{
-    font-size:14px;
-    font-weight:bold;
-    font-style:italic;
-    margin-top:5px;
-}
-
-.menu{
-    margin-top:20px;
-    padding:0 10px;
-}
-
-.menu button{
-    width:100%;
-    border:none;
-    background:transparent;
-    color:#fff;
-    text-align:left;
-    padding:14px 18px;
-    border-radius:9px;
-    margin-bottom:6px;
-    font-size:15px;
-    cursor:pointer;
-}
-
-.menu button:hover,
-.menu button.active{
-    background:rgba(255,255,255,.15);
-}
-
-.sidebar-footer{
-    margin-top:auto;
-    padding:18px;
-    text-align:center;
-    border-top:1px solid rgba(255,255,255,.12);
-    font-size:13px;
-    line-height:1.8;
-}
-
-/* ================= MAIN ================= */
-
-.main{
-    margin-left:245px;
-    padding:28px;
-}
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    margin-bottom:22px;
-}
-
-.welcome h1{
-    font-size:32px;
-    color:#102a5c;
-}
-
-.welcome h1 span{
-    color:#1769c2;
-}
-
-.welcome p{
-    margin-top:6px;
-    color:#667085;
-}
-
-.right-top{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.client-box{
-    background:#fff;
-    border:1px solid #dce5ef;
-    border-radius:12px;
-    padding:12px 18px;
-    min-width:210px;
-    box-shadow:0 4px 15px rgba(0,0,0,.04);
-}
-
-.client-box small{
-    display:block;
-    color:#667085;
-    margin-bottom:4px;
-}
-
-.client-box strong{
-    color:#102a5c;
-    font-size:16px;
-}
-
-.logout-top{
-    background:#092d68;
-    color:#fff;
-    border:none;
-    border-radius:9px;
-    padding:13px 20px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-/* ================= SUMMARY ================= */
-
-.summary{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin-bottom:20px;
-}
-
-.card{
-    background:#fff;
-    border:1px solid #dce5ef;
-    border-radius:12px;
-    padding:18px;
-    box-shadow:0 4px 15px rgba(0,0,0,.04);
-}
-
-.card-title{
-    color:#667085;
-    font-size:13px;
-}
-
-.card-value{
-    font-size:27px;
-    font-weight:800;
-    color:#102a5c;
-    margin-top:8px;
-}
-
-/* ================= WORKSPACE ================= */
-
-.workspace{
-    background:#fff;
-    border:1px solid #dce5ef;
-    border-radius:15px;
-    padding:16px;
-    box-shadow:0 5px 20px rgba(0,0,0,.04);
-}
-
-.actions{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    align-items:center;
-    margin-bottom:16px;
-}
-
-.btn{
-    border:none;
-    border-radius:8px;
-    padding:12px 16px;
-    font-size:14px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.btn-green{
-    background:#08ad68;
-    color:#fff;
-}
-
-.btn-blue{
-    background:#0874d1;
-    color:#fff;
-}
-
-.btn-orange{
-    background:#ff8a24;
-    color:#fff;
-}
-
-.btn-purple{
-    background:#6842d9;
-    color:#fff;
-}
-
-.btn-red{
-    background:#fff;
-    border:1px solid #f04438;
-    color:#d92d20;
-    margin-left:auto;
-}
-
-.btn:hover{
-    opacity:.9;
-}
-
-input[type=file]{
-    display:none;
-}
-
-/* ================= TABLE ================= */
-
-.table-wrapper{
-    width:100%;
-    overflow-x:auto;
-    border:1px solid #d5e1ed;
-    border-radius:9px;
-}
-
-table{
-    width:100%;
-    min-width:1600px;
-    border-collapse:collapse;
-}
-
-thead{
-    background:#edf3f9;
-}
-
-th{
-    padding:12px 8px;
-    color:#17345e;
-    font-size:12px;
-    white-space:nowrap;
-    border-bottom:1px solid #d5e1ed;
-    text-align:center;
-}
-
-td{
-    padding:6px;
-    border-bottom:1px solid #edf0f4;
-    vertical-align:middle;
-}
-
-.data-input{
-    width:100%;
-    height:39px;
-    border:1px solid #d5deea;
-    border-radius:6px;
-    padding:0 8px;
-    outline:none;
-    font-size:13px;
-    background:#fff;
-}
-
-.data-input:focus{
-    border-color:#1769d8;
-    box-shadow:0 0 0 2px rgba(23,105,216,.1);
-}
-
-.calc-input{
-    background:#f4f8fc;
-    color:#17345e;
-    font-weight:bold;
-}
-
-.uan{
-    min-width:145px;
-}
-
-.name{
-    min-width:205px;
-}
-
-.number{
-    min-width:125px;
-}
-
-.ncp{
-    min-width:85px;
-}
-
-.refund{
-    min-width:140px;
-}
-
-.action-buttons{
-    display:flex;
-    gap:5px;
-}
-
-.delete-btn{
-    width:36px;
-    height:36px;
-    border-radius:6px;
-    cursor:pointer;
-    background:#fff;
-    border:1px solid #f04438;
-    color:#d92d20;
-}
-
-/* ================= NOTE ================= */
-
-.note{
-    margin-top:15px;
-    padding:12px 14px;
-    background:#f5f9ff;
-    border:1px solid #b9d8ff;
-    border-radius:8px;
-    color:#1755a0;
-    font-size:13px;
-}
-
-.empty{
-    text-align:center;
-    padding:35px;
-    color:#98a2b3;
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:1050px){
-
-    .summary{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-}
-
-@media(max-width:750px){
-
-    .sidebar{
-        position:relative;
-        width:100%;
-        height:auto;
-    }
-
-    .menu{
-        display:flex;
-        flex-wrap:wrap;
-    }
-
-    .menu button{
-        width:auto;
-        margin:3px;
-    }
-
-    .sidebar-footer{
-        margin-top:10px;
-    }
-
-    .main{
-        margin-left:0;
-        padding:14px;
-    }
-
-    .topbar{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    .right-top{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    .client-box{
-        width:100%;
-    }
-
-    .summary{
-        grid-template-columns:1fr;
-    }
-
-    .btn-red{
-        margin-left:0;
-    }
-
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#f3f7fc;color:#172b4d}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:245px;background:linear-gradient(180deg,#071f48,#063c82,#075bb5);color:white;z-index:100;display:flex;flex-direction:column}
+.logo-area{text-align:center;padding:25px 10px 20px}
+.logo-circle{width:90px;height:90px;border-radius:50%;background:white;border:5px solid #ff7900;display:flex;align-items:center;justify-content:center;margin:auto}
+.logo-pf{font-size:34px;font-weight:900;font-style:italic;letter-spacing:-5px}.logo-p{color:#092d68}.logo-f{color:#ff7300}
+.logo-title{font-size:28px;font-weight:900;margin-top:15px}.logo-by{font-size:15px;font-weight:bold;font-style:italic;margin-top:5px}
+.menu{margin-top:20px;padding:0 10px}.menu button{width:100%;border:none;background:transparent;color:white;text-align:left;padding:15px 18px;border-radius:9px;margin-bottom:7px;font-size:15px;cursor:pointer}.menu button:hover,.menu button.active{background:rgba(255,255,255,.14)}
+.sidebar-footer{margin-top:auto;padding:20px;text-align:center;border-top:1px solid rgba(255,255,255,.12);font-size:13px;line-height:1.8}
+.main{margin-left:245px;padding:30px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px}
+.welcome h1{font-size:32px;color:#102a5c}.welcome h1 span{color:#1769c2}.welcome p{margin-top:7px;color:#667085}
+.client-box{background:white;border:1px solid #dce5ef;border-radius:12px;padding:14px 20px;min-width:240px;box-shadow:0 4px 15px rgba(0,0,0,.04)}.client-box small{display:block;color:#667085;margin-bottom:5px}.client-box strong{color:#102a5c;font-size:17px}
+.logout-top{background:#092d68;color:white;border:none;border-radius:9px;padding:14px 22px;cursor:pointer;font-weight:bold}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}.card{background:white;border:1px solid #dce5ef;border-radius:12px;padding:20px;box-shadow:0 4px 15px rgba(0,0,0,.04)}.card-title{color:#667085;font-size:14px}.card-value{font-size:28px;font-weight:800;color:#102a5c;margin-top:10px}
+.workspace{background:white;border:1px solid #dce5ef;border-radius:15px;padding:20px;box-shadow:0 5px 20px rgba(0,0,0,.04)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px}.btn{border:none;border-radius:9px;padding:13px 18px;font-size:14px;font-weight:bold;cursor:pointer}.btn-green{background:#16a765;color:white}.btn-blue{background:#1769d8;color:white}.btn-orange{background:#f79009;color:white}.btn-purple{background:#7a4ce0;color:white}.btn-red{background:white;border:1px solid #f04438;color:#d92d20;margin-left:auto}.btn:hover{opacity:.9}
+input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1px solid #dce5ef;border-radius:10px}table{width:100%;min-width:1100px;border-collapse:collapse}thead{background:#edf3f9}th{padding:14px 10px;color:#17345e;font-size:13px;white-space:nowrap;border-bottom:1px solid #dce5ef}td{padding:8px;border-bottom:1px solid #edf0f4}td:first-child,th:first-child{text-align:center;width:45px}
+.data-input{width:100%;min-width:110px;height:42px;border:1px solid #d5deea;border-radius:7px;padding:0 10px;outline:none;font-size:14px}.data-input:focus{border-color:#1769d8;box-shadow:0 0 0 2px rgba(23,105,216,.1)}.uan{min-width:145px}.name{min-width:190px}.number{min-width:130px}.ncp{min-width:90px}
+.action-buttons{display:flex;gap:6px}.edit-btn,.delete-btn{width:38px;height:38px;border-radius:7px;cursor:pointer;background:white;font-size:17px}.edit-btn{border:1px solid #1769d8;color:#1769d8}.delete-btn{border:1px solid #f04438;color:#d92d20}
+.note{margin-top:20px;padding:14px 16px;background:#f5f9ff;border:1px solid #b9d8ff;border-radius:9px;color:#1755a0;font-size:14px}.empty{text-align:center;padding:40px;color:#98a2b3}
+.adjust-box{display:none;margin-bottom:20px;padding:18px;background:#fffaf0;border:1px solid #f6c85f;border-radius:12px}.adjust-box h3{color:#7a4d00;margin-bottom:7px}.adjust-box p{color:#6b5a35;font-size:14px;line-height:1.6}.adjust-status{margin-top:10px;font-weight:bold}
+@media(max-width:1000px){.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:750px){.sidebar{position:relative;width:100%;height:auto}.menu{display:flex;flex-wrap:wrap;gap:5px}.menu button{width:auto;margin:0}.sidebar-footer{margin-top:15px}.main{margin-left:0;padding:15px}.topbar{flex-direction:column;align-items:stretch}.summary{grid-template-columns:1fr}.btn-red{margin-left:0}}
 </style>
-
 </head>
-
-
 <body>
 
-
-<!-- ================= SIDEBAR ================= -->
-
 <aside class="sidebar">
-
-    <div class="logo-area">
-
-        <div class="logo-circle">
-
-            <div class="logo-pf">
-                <span class="logo-p">P</span><span class="logo-f">F</span>
-            </div>
-
-        </div>
-
-        <div class="logo-title">
-            PF TOOL
-        </div>
-
-        <div class="logo-by">
-            by Karan Vaghela
-        </div>
-
-    </div>
-
-
-    <div class="menu">
-
-        <button class="active">
-            🏠 &nbsp; Dashboard
-        </button>
-
-        <button onclick="document.getElementById('excelFile').click()">
-            📤 &nbsp; Upload Excel
-        </button>
-
-        <button onclick="focusTable()">
-            👥 &nbsp; Employee Data
-        </button>
-
-        <button onclick="generateTXT()">
-            📄 &nbsp; Generate TXT
-        </button>
-
-        <button onclick="logout()">
-            🚪 &nbsp; Logout
-        </button>
-
-    </div>
-
-
-    <div class="sidebar-footer">
-
-        © 2026 PF TOOL<br>
-        by Karan Vaghela<br>
-        📱 9574140727
-
-    </div>
-
+<div class="logo-area">
+<div class="logo-circle"><div class="logo-pf"><span class="logo-p">P</span><span class="logo-f">F</span></div></div>
+<div class="logo-title">PF TOOL</div>
+<div class="logo-by">by Karan Vaghela</div>
+</div>
+<div class="menu">
+<button class="active">🏠 &nbsp; Dashboard</button>
+<button onclick="document.getElementById('excelFile').click()">☁️ &nbsp; Upload Excel</button>
+<button onclick="document.getElementById('payrollFile').click()">💰 &nbsp; Payroll Adjustment</button>
+<button onclick="focusTable()">👥 &nbsp; Employee Data</button>
+<button onclick="generateTXT()">📄 &nbsp; Generate TXT</button>
+<button onclick="downloadTXT()">⬇️ &nbsp; Downloads</button>
+<button onclick="logout()">🚪 &nbsp; Logout</button>
+</div>
+<div class="sidebar-footer">© 2026 PF TOOL<br>by Karan Vaghela<br>📞 9574140727</div>
 </aside>
 
-
-
-<!-- ================= MAIN ================= -->
-
 <main class="main">
-
-
-    <div class="topbar">
-
-        <div class="welcome">
-
-            <h1>
-                Welcome,
-                <span id="clientName">
-                    Client
-                </span>
-            </h1>
-
-            <p>
-                Client ID:
-                <strong id="clientID">
-                    -
-                </strong>
-            </p>
-
-        </div>
-
-
-        <div class="right-top">
-
-            <div class="client-box">
-
-                <small>
-                    Client Name
-                </small>
-
-                <strong id="clientNameBox">
-                    -
-                </strong>
-
-            </div>
-
-
-            <button
-                class="logout-top"
-                onclick="logout()">
-
-                ⇥ Logout
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ================= SUMMARY ================= -->
-
-    <div class="summary">
-
-        <div class="card">
-
-            <div class="card-title">
-                Total Records
-            </div>
-
-            <div
-                class="card-value"
-                id="totalRecords">
-
-                0
-
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-title">
-                Excel Uploaded
-            </div>
-
-            <div
-                class="card-value"
-                id="excelStatus">
-
-                No
-
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-title">
-                Generated TXT
-            </div>
-
-            <div
-                class="card-value"
-                id="txtStatus">
-
-                No
-
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-title">
-                Total Downloads
-            </div>
-
-            <div
-                class="card-value"
-                id="downloadCount">
-
-                0
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ================= WORKSPACE ================= -->
-
-    <section class="workspace">
-
-
-        <div class="actions">
-
-
-            <!-- TEMPLATE -->
-
-            <a
-                href="PF_TOOL_Excel_Template.xlsx"
-                download
-                class="btn btn-green"
-                style="text-decoration:none;">
-
-                📥 Download Excel Template
-
-            </a>
-
-
-            <!-- UPLOAD -->
-
-            <label
-                for="excelFile"
-                class="btn btn-blue"
-                style="display:inline-block;">
-
-                📤 Upload Excel
-
-            </label>
-
-
-            <input
-                type="file"
-                id="excelFile"
-                accept=".xlsx,.xls,.csv">
-
-
-            <!-- ADD -->
-
-            <button
-                class="btn btn-orange"
-                onclick="addRow()">
-
-                ＋ Add Employee
-
-            </button>
-
-
-            <!-- TXT -->
-
-            <button
-                class="btn btn-purple"
-                onclick="generateTXT()">
-
-                📄 Generate TXT
-
-            </button>
-
-
-            <!-- CLEAR -->
-
-            <button
-                class="btn btn-red"
-                onclick="clearAll()">
-
-                🗑 Clear All Data
-
-            </button>
-
-        </div>
-
-
-
-        <!-- ================= TABLE ================= -->
-
-        <div
-            class="table-wrapper"
-            id="employeeTableArea">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>#</th>
-
-                        <th>UAN</th>
-
-                        <th>MEMBER NAME</th>
-
-                        <th>GROSS WAGES</th>
-
-                        <th>BASIC WAGES</th>
-
-                        <th>EPS WAGES</th>
-
-                        <th>EDLI WAGES</th>
-
-                        <th>EPF CONTRI. REMITTED</th>
-
-                        <th>EPS CONTRI. REMITTED</th>
-
-                        <th>EPF EPS DIFF REMITTED</th>
-
-                        <th>NCP DAYS</th>
-
-                        <th>REFUND OF ADVANCE</th>
-
-                        <th>ACTION</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="employeeBody">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <div class="note">
-
-            ℹ️ <strong>Excel Format:</strong>
-            UAN, MEMBER NAME, GROSS WAGES,
-            BASIC WAGES, NCP DAYS and REFUND OF ADVANCE
-            are entered/uploaded. EPS WAGES, EDLI WAGES
-            and contribution columns are automatically calculated.
-
-        </div>
-
-
-    </section>
-
-
+<div class="topbar">
+<div class="welcome"><h1>Welcome, <span id="clientName">Client</span></h1><p>Client ID: <strong id="clientID">-</strong></p></div>
+<div style="display:flex;align-items:center;gap:12px;"><div class="client-box"><small>Client Name</small><strong id="clientNameBox">-</strong></div><button class="logout-top" onclick="logout()">⇥ Logout</button></div>
+</div>
+
+<div class="summary">
+<div class="card"><div class="card-title">Total Records</div><div class="card-value" id="totalRecords">0</div></div>
+<div class="card"><div class="card-title">Excel Uploaded</div><div class="card-value" id="excelStatus">No</div></div>
+<div class="card"><div class="card-title">Generated TXT</div><div class="card-value" id="txtStatus">No</div></div>
+<div class="card"><div class="card-title">Total Downloads</div><div class="card-value" id="downloadCount">0</div></div>
+</div>
+
+<section class="workspace">
+<div class="actions">
+<a href="PF_TOOL_Excel_Template.xlsx" download class="btn btn-green" style="text-decoration:none;">⬇️ Download Excel Template</a>
+
+<a href="Professional_Tax_FORM_5_Template.docx"
+   download
+   class="btn btn-orange"
+   style="text-decoration:none;">
+   📄 Download Professional Tax Form 5
+</a>
+
+<label for="excelFile" class="btn btn-blue" style="display:inline-block;">⬆️ Upload Excel</label>
+<input type="file" id="excelFile" accept=".xlsx,.xls,.csv">
+<label for="payrollFile" class="btn btn-purple" style="display:inline-block;">💰 Upload Payroll Excel</label>
+<input type="file" id="payrollFile" accept=".xlsx,.xls,.csv">
+<button class="btn btn-orange" onclick="addRow()">＋ Add Employee</button>
+<button class="btn btn-red" onclick="clearAll()">🗑 Clear All Data</button>
+</div>
+
+<div class="adjust-box" id="adjustBox">
+<h3>💰 Payroll Adjustment</h3>
+<p>Excel ke header me <b>Total Days</b>, <b>Salary Per Day</b> aur <b>Gross Salary</b> hone chahiye. Tool un headers ko automatically detect karke ₹513 minimum aur maximum 26 Present Days ka adjustment karega. Decimal day ka paisa <b>Product Incentive</b> me jayega.</p>
+<div class="adjust-status" id="adjustStatus"></div>
+</div>
+
+<div class="table-wrapper" id="employeeTableArea">
+<table>
+<thead><tr><th>#</th><th>UAN</th><th>MEMBER NAME</th><th>GROSS WAGES</th><th>BASIC WAGES</th><th>NCP DAYS</th><th>REFUND OF ADVANCE</th><th>ACTION</th></tr></thead>
+<tbody id="employeeBody"></tbody>
+</table>
+</div>
+
+<div class="note">ℹ️ <strong>Note:</strong> PF Excel upload aur Payroll Adjustment alag features hain. Payroll Excel upload karne par tool automatically naya adjusted Excel banayega, jise client turant download kar sakta hai.</div>
+</section>
 </main>
 
-
-
 <script>
+const clientID=localStorage.getItem("pf_client_id");
+const clientName=localStorage.getItem("pf_client_name");
+if(localStorage.getItem("pf_logged_in")!=="true"){window.location.href="index.html";}
+document.getElementById("clientID").innerText=clientID||"CLIENT";
+document.getElementById("clientName").innerText=clientName||"Client";
+document.getElementById("clientNameBox").innerText=clientName||"Client";
 
-/* =====================================================
-   LOGIN INFORMATION
-===================================================== */
+let employees=[],generatedTXT="",downloads=0;
 
-const clientID =
-    localStorage.getItem("pf_client_id");
-
-const clientName =
-    localStorage.getItem("pf_client_name");
-
-
-/* =====================================================
-   LOGIN CHECK
-===================================================== */
-
-if(
-    localStorage.getItem("pf_logged_in") !== "true"
-){
-
-    window.location.href =
-        "index.html";
-
+function addRow(data={}){
+ employees.push({uan:data.uan||"",name:data.name||"",gross:data.gross||"",basic:data.basic||"",ncp:data.ncp||"0",refund:data.refund||""});
+ renderTable();
 }
-
-
-/* =====================================================
-   SHOW CLIENT
-===================================================== */
-
-document.getElementById(
-    "clientID"
-).innerText =
-    clientID || "CLIENT";
-
-document.getElementById(
-    "clientName"
-).innerText =
-    clientName || "Client";
-
-document.getElementById(
-    "clientNameBox"
-).innerText =
-    clientName || "Client";
-
-
-/* =====================================================
-   EMPLOYEE DATA
-===================================================== */
-
-let employees = [];
-
-let generatedTXT = "";
-
-let downloads = 0;
-
-
-/* =====================================================
-   ADD EMPLOYEE
-===================================================== */
-
-function addRow(data = {}){
-
-    const employee = {
-
-        uan:
-            data.uan || "",
-
-        name:
-            data.name || "",
-
-        gross:
-            toNumberOrBlank(data.gross),
-
-        basic:
-            toNumberOrBlank(data.basic),
-
-        ncp:
-            toNumberOrZero(data.ncp),
-
-        refund:
-            toNumberOrBlank(data.refund)
-
-    };
-
-
-    employees.push(employee);
-
-    renderTable();
-
-}
-
-
-/* =====================================================
-   NUMBER HELPERS
-===================================================== */
-
-function toNumberOrBlank(value){
-
-    if(
-        value === null ||
-        value === undefined ||
-        value === ""
-    ){
-        return "";
-    }
-
-    const n =
-        Number(
-            String(value).replace(/,/g,"")
-        );
-
-    return Number.isFinite(n)
-        ? n
-        : "";
-
-}
-
-
-function toNumberOrZero(value){
-
-    if(
-        value === null ||
-        value === undefined ||
-        value === ""
-    ){
-        return 0;
-    }
-
-    const n =
-        Number(
-            String(value).replace(/,/g,"")
-        );
-
-    return Number.isFinite(n)
-        ? n
-        : 0;
-
-}
-
-
-/* =====================================================
-   ROUNDUP - SAME IDEA AS EXCEL ROUNDUP
-===================================================== */
-
-function roundUp(value, digits = 0){
-
-    const factor =
-        Math.pow(10,digits);
-
-    return Math.ceil(
-        value * factor - 1e-10
-    ) / factor;
-
-}
-
-
-/* =====================================================
-   EPS CONTRIBUTION
-   EXACT LOGIC FROM SOURCE EXCEL
-
-   IF fractional part <= 0.49
-   use integer
-   ELSE integer + 1
-===================================================== */
-
-function calculateEPSContribution(epsWages){
-
-    const value =
-        epsWages * 8.33 / 100;
-
-    const integerPart =
-        Math.floor(value);
-
-    const decimalPart =
-        value - integerPart;
-
-
-    if(decimalPart <= 0.49){
-
-        return integerPart;
-
-    }
-
-
-    return integerPart + 1;
-
-}
-
-
-/* =====================================================
-   CALCULATE ALL DERIVED VALUES
-
-   Source Excel logic:
-
-   EPS WAGES = EDLI WAGES
-   EDLI WAGES = IF(BASIC<15000,BASIC,15000)
-   EPF CONTRI = ROUNDUP(BASIC*12%,0)
-   EPS CONTRI = special rounding of EPS*8.33%
-   DIFF = EPF - EPS
-===================================================== */
-
-function calculateEmployee(emp){
-
-    const basic =
-        Number(emp.basic) || 0;
-
-
-    /* EDLI */
-
-    const edli =
-        Math.min(
-            basic,
-            15000
-        );
-
-
-    /* EPS WAGES */
-
-    const eps =
-        edli;
-
-
-    /* EPF contribution */
-
-    const epfContribution =
-        roundUp(
-            basic * 12 / 100,
-            0
-        );
-
-
-    /* EPS contribution */
-
-    const epsContribution =
-        calculateEPSContribution(
-            eps
-        );
-
-
-    /* Difference */
-
-    const difference =
-        epfContribution -
-        epsContribution;
-
-
-    return {
-
-        epsWages: eps,
-
-        edliWages: edli,
-
-        epfContribution:
-            epfContribution,
-
-        epsContribution:
-            epsContribution,
-
-        difference:
-            difference
-
-    };
-
-}
-
-
-/* =====================================================
-   RENDER TABLE
-===================================================== */
-
 function renderTable(){
-
-    const body =
-        document.getElementById(
-            "employeeBody"
-        );
-
-
-    body.innerHTML = "";
-
-
-    if(employees.length === 0){
-
-        body.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="13"
-                    class="empty">
-
-                    No employee data.
-                    Download Excel Template
-                    or Add Employee.
-
-                </td>
-
-            </tr>
-
-        `;
-
-        updateSummary();
-
-        return;
-
-    }
-
-
-    employees.forEach(
-        (emp,index)=>{
-
-
-            const calc =
-                calculateEmployee(emp);
-
-
-            const tr =
-                document.createElement("tr");
-
-
-            tr.innerHTML = `
-
-                <td>
-                    ${index + 1}
-                </td>
-
-
-                <!-- UAN -->
-
-                <td>
-
-                    <input
-                        class="data-input uan"
-                        value="${escapeHTML(emp.uan)}"
-                        placeholder="UAN"
-                        onchange="updateData(${index},'uan',this.value)">
-
-                </td>
-
-
-                <!-- NAME -->
-
-                <td>
-
-                    <input
-                        class="data-input name"
-                        value="${escapeHTML(emp.name)}"
-                        placeholder="Member Name"
-                        onchange="updateData(${index},'name',this.value)">
-
-                </td>
-
-
-                <!-- GROSS -->
-
-                <td>
-
-                    <input
-                        class="data-input number"
-                        type="number"
-                        step="0.01"
-                        value="${escapeHTML(emp.gross)}"
-                        placeholder="Gross"
-                        onchange="updateData(${index},'gross',this.value)">
-
-                </td>
-
-
-                <!-- BASIC -->
-
-                <td>
-
-                    <input
-                        class="data-input number"
-                        type="number"
-                        step="0.01"
-                        value="${escapeHTML(emp.basic)}"
-                        placeholder="Basic Wages"
-                        onchange="updateData(${index},'basic',this.value)">
-
-                </td>
-
-
-                <!-- EPS WAGES -->
-
-                <td>
-
-                    <input
-                        class="data-input number calc-input"
-                        value="${formatNumber(calc.epsWages)}"
-                        readonly>
-
-                </td>
-
-
-                <!-- EDLI WAGES -->
-
-                <td>
-
-                    <input
-                        class="data-input number calc-input"
-                        value="${formatNumber(calc.edliWages)}"
-                        readonly>
-
-                </td>
-
-
-                <!-- EPF CONTRIBUTION -->
-
-                <td>
-
-                    <input
-                        class="data-input number calc-input"
-                        value="${formatNumber(calc.epfContribution)}"
-                        readonly>
-
-                </td>
-
-
-                <!-- EPS CONTRIBUTION -->
-
-                <td>
-
-                    <input
-                        class="data-input number calc-input"
-                        value="${formatNumber(calc.epsContribution)}"
-                        readonly>
-
-                </td>
-
-
-                <!-- DIFFERENCE -->
-
-                <td>
-
-                    <input
-                        class="data-input number calc-input"
-                        value="${formatNumber(calc.difference)}"
-                        readonly>
-
-                </td>
-
-
-                <!-- NCP -->
-
-                <td>
-
-                    <input
-                        class="data-input ncp"
-                        type="number"
-                        min="0"
-                        max="31"
-                        value="${escapeHTML(emp.ncp)}"
-                        placeholder="NCP"
-                        onchange="updateData(${index},'ncp',this.value)">
-
-                </td>
-
-
-                <!-- REFUND -->
-
-                <td>
-
-                    <input
-                        class="data-input refund"
-                        type="number"
-                        step="0.01"
-                        value="${escapeHTML(emp.refund)}"
-                        placeholder="Refund"
-                        onchange="updateData(${index},'refund',this.value)">
-
-                </td>
-
-
-                <!-- ACTION -->
-
-                <td>
-
-                    <div class="action-buttons">
-
-                        <button
-                            class="delete-btn"
-                            onclick="deleteRow(${index})">
-
-                            🗑
-
-                        </button>
-
-                    </div>
-
-                </td>
-
-            `;
-
-
-            body.appendChild(tr);
-
-        }
-    );
-
-
-    updateSummary();
-
+ const body=document.getElementById("employeeBody"); body.innerHTML="";
+ if(employees.length===0){body.innerHTML='<tr><td colspan="8" class="empty">No employee data. Download Excel Template or Add Employee.</td></tr>';}
+ employees.forEach((emp,index)=>{
+ const tr=document.createElement("tr");
+ tr.innerHTML=`<td>${index+1}</td>
+ <td><input class="data-input uan" value="${escapeHTML(emp.uan)}" placeholder="UAN" onchange="updateData(${index},'uan',this.value)"></td>
+ <td><input class="data-input name" value="${escapeHTML(emp.name)}" placeholder="Member Name" onchange="updateData(${index},'name',this.value)"></td>
+ <td><input class="data-input number" type="number" step="0.01" value="${escapeHTML(emp.gross)}" placeholder="Gross" onchange="updateData(${index},'gross',this.value)"></td>
+ <td><input class="data-input number" type="number" step="0.01" value="${escapeHTML(emp.basic)}" placeholder="Basic Wages" onchange="updateData(${index},'basic',this.value)"></td>
+ <td><input class="data-input ncp" type="number" min="0" max="31" value="${escapeHTML(emp.ncp)}" placeholder="NCP" onchange="updateData(${index},'ncp',this.value)"></td>
+ <td><input class="data-input number" type="number" step="0.01" value="${escapeHTML(emp.refund)}" placeholder="Refund" onchange="updateData(${index},'refund',this.value)"></td>
+ <td><div class="action-buttons"><button class="edit-btn" onclick="editRow(${index})">✏️</button><button class="delete-btn" onclick="deleteRow(${index})">🗑</button></div></td>`;
+ body.appendChild(tr);
+ });
+ updateSummary();
 }
-
-
-/* =====================================================
-   UPDATE INPUT
-===================================================== */
-
-function updateData(index,key,value){
-
-    if(
-        key === "gross" ||
-        key === "basic" ||
-        key === "ncp" ||
-        key === "refund"
-    ){
-
-        employees[index][key] =
-            value === ""
-                ? ""
-                : Number(value);
-
-    }else{
-
-        employees[index][key] =
-            value;
-
-    }
-
-
-    /*
-       IMPORTANT:
-       Re-render immediately so calculations
-       never disappear and always update.
-    */
-
-    renderTable();
-
-}
-
-
-/* =====================================================
-   DELETE
-===================================================== */
-
-function deleteRow(index){
-
-    if(
-        !confirm(
-            "Delete this employee?"
-        )
-    ){
-
-        return;
-
-    }
-
-
-    employees.splice(
-        index,
-        1
-    );
-
-
-    renderTable();
-
-}
-
-
-/* =====================================================
-   CLEAR ALL
-===================================================== */
-
+function updateData(index,key,value){employees[index][key]=value}
+function editRow(index){document.querySelectorAll("#employeeBody tr")[index]?.querySelector("input")?.focus()}
+function deleteRow(index){if(!confirm("Delete this employee?"))return;employees.splice(index,1);renderTable()}
 function clearAll(){
-
-    if(employees.length === 0){
-
-        return;
-
-    }
-
-
-    if(
-        !confirm(
-            "Clear all employee data?"
-        )
-    ){
-
-        return;
-
-    }
-
-
-    employees = [];
-
-    generatedTXT = "";
-
-
-    document.getElementById(
-        "excelStatus"
-    ).innerText = "No";
-
-
-    document.getElementById(
-        "txtStatus"
-    ).innerText = "No";
-
-
-    renderTable();
-
+ if(employees.length===0)return;
+ if(!confirm("Clear all employee data?"))return;
+ employees=[];generatedTXT="";
+ document.getElementById("excelStatus").innerText="No";
+ document.getElementById("txtStatus").innerText="No";
+ renderTable();
 }
-
-
-/* =====================================================
-   EXCEL UPLOAD
-===================================================== */
-
-document
-.getElementById("excelFile")
-.addEventListener(
-    "change",
-    handleExcel
-);
-
+document.getElementById("excelFile").addEventListener("change",handleExcel);
+document.getElementById("payrollFile").addEventListener("change",handlePayrollExcel);
 
 function handleExcel(event){
+ const file=event.target.files[0]; if(!file)return;
+ const reader=new FileReader();
+ reader.onload=function(e){
+  try{
+   const workbook=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
+   const sheet=workbook.Sheets[workbook.SheetNames[0]];
+   const rows=XLSX.utils.sheet_to_json(sheet,{defval:""});
+   if(!rows.length){alert("Excel file me data nahi mila.");return;}
+   employees=rows.map(row=>{
+    const n={};Object.keys(row).forEach(k=>n[normalizeHeader(k)]=row[k]);
+    return {uan:getValue(n,["uan"]),name:getValue(n,["membername","name","employeename"]),gross:getValue(n,["grosswages","gross"]),basic:getValue(n,["basicwages","basic"]),ncp:getValue(n,["ncpdays","ncp"])||"0",refund:getValue(n,["refundofadvance","refund","advance"])};
+   });
+   document.getElementById("excelStatus").innerText="Yes";renderTable();alert(employees.length+" employee records uploaded successfully.");
+  }catch(err){console.error(err);alert("Excel read nahi ho saka. Template format check karo.");}
+  event.target.value="";
+ };reader.readAsArrayBuffer(file);
+}
 
-    const file =
-        event.target.files[0];
-
-
-    if(!file){
-
-        return;
-
+/* =========================================================
+   PAYROLL ADJUSTMENT
+   Detects header row + columns:
+   Total Days | Salary Per Day | Gross Salary
+   Rules:
+   A) Daily rate < 513:
+      full days = floor(Gross Salary / 513)
+      Present Days = min(full days,26)
+      Adjusted Gross = Present Days*513
+      Product Incentive = Gross - Adjusted Gross
+   B) Rate >= 513 and Days <= 26:
+      Present Days = floor(Days)
+      decimal amount = decimal part * rate -> Product Incentive
+      Adjusted Gross = full days*rate
+   C) Days > 26:
+      Present Days = 26
+      Product Incentive = (Days-26)*rate
+      Adjusted Gross = 26*rate
+   ========================================================= */
+function handlePayrollExcel(event){
+ const file=event.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=function(e){
+  try{
+   const workbook=XLSX.read(new Uint8Array(e.target.result),{type:"array",cellStyles:true});
+   const sheetName=workbook.SheetNames[0], sheet=workbook.Sheets[sheetName];
+   const matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:"",raw:true});
+   const headerInfo=findPayrollHeaders(matrix);
+   if(!headerInfo){
+    alert("Payroll Excel me 'Total Days', 'Salary Per Day' aur 'Gross Salary' headers nahi mile.");
+    return;
+   }
+   const {headerRow,daysCol,rateCol,grossCol}=headerInfo;
+   const out=[];
+   // Copy all columns from original header
+   const originalHeader=matrix[headerRow].map(v=>v);
+   const outHeader=[...originalHeader,"Adjusted Present Days","Adjusted Salary Per Day","Adjusted Gross Salary","Product Incentive","Adjustment Rule"];
+   out.push(outHeader);
+   let processed=0;
+   for(let r=headerRow+1;r<matrix.length;r++){
+    const row=matrix[r]||[];
+    const hasAny=row.some(v=>String(v??"").trim()!=="");
+    if(!hasAny)continue;
+    const days=num(row[daysCol]), rate=num(row[rateCol]), gross=num(row[grossCol]);
+    if(days===null && rate===null && gross===null){
+      out.push([...row,"","","","",""]);
+      continue;
     }
-
-
-    const reader =
-        new FileReader();
-
-
-    reader.onload =
-        function(e){
-
-            try{
-
-                const data =
-                    new Uint8Array(
-                        e.target.result
-                    );
-
-
-                const workbook =
-                    XLSX.read(
-                        data,
-                        {
-                            type:"array"
-                        }
-                    );
-
-
-                const sheet =
-                    workbook.Sheets[
-                        workbook.SheetNames[0]
-                    ];
-
-
-                const rows =
-                    XLSX.utils.sheet_to_json(
-                        sheet,
-                        {
-                            defval:""
-                        }
-                    );
-
-
-                if(rows.length === 0){
-
-                    alert(
-                        "Excel file me data nahi mila."
-                    );
-
-                    return;
-
-                }
-
-
-                const uploaded = [];
-
-
-                rows.forEach(
-                    row=>{
-
-                        const normalized = {};
-
-
-                        Object.keys(row)
-                        .forEach(
-                            key=>{
-
-                                normalized[
-                                    normalizeHeader(key)
-                                ] =
-                                    row[key];
-
-                            }
-                        );
-
-
-                        const uan =
-                            getValue(
-                                normalized,
-                                [
-                                    "uan"
-                                ]
-                            );
-
-
-                        const name =
-                            getValue(
-                                normalized,
-                                [
-                                    "membername",
-                                    "name",
-                                    "employeename"
-                                ]
-                            );
-
-
-                        const gross =
-                            getValue(
-                                normalized,
-                                [
-                                    "grosswages",
-                                    "gross"
-                                ]
-                            );
-
-
-                        /*
-                           IMPORTANT:
-                           Accept BASIC WAGES.
-                           Also accept EPF WAGES from old
-                           Excel for compatibility.
-                        */
-
-                        const basic =
-                            getValue(
-                                normalized,
-                                [
-                                    "basicwages",
-                                    "basic",
-                                    "epfwages"
-                                ]
-                            );
-
-
-                        const ncp =
-                            getValue(
-                                normalized,
-                                [
-                                    "ncpdays",
-                                    "ncp"
-                                ]
-                            );
-
-
-                        const refund =
-                            getValue(
-                                normalized,
-                                [
-                                    "refundofadvance",
-                                    "refund",
-                                    "advance"
-                                ]
-                            );
-
-
-                        /*
-                           Skip completely blank rows.
-                        */
-
-                        if(
-                            String(uan).trim() === "" &&
-                            String(name).trim() === "" &&
-                            String(gross).trim() === "" &&
-                            String(basic).trim() === ""
-                        ){
-
-                            return;
-
-                        }
-
-
-                        uploaded.push({
-
-                            uan:
-                                String(uan),
-
-                            name:
-                                String(name),
-
-                            gross:
-                                toNumberOrBlank(gross),
-
-                            basic:
-                                toNumberOrBlank(basic),
-
-                            ncp:
-                                toNumberOrZero(ncp),
-
-                            refund:
-                                toNumberOrBlank(refund)
-
-                        });
-
-                    }
-                );
-
-
-                if(uploaded.length === 0){
-
-                    alert(
-                        "Valid employee rows nahi mile."
-                    );
-
-                    return;
-
-                }
-
-
-                /*
-                   IMPORTANT:
-                   Only INPUT data is loaded.
-
-                   Calculation columns are NOT
-                   imported from Excel.
-
-                   They are recalculated by
-                   calculateEmployee().
-
-                   Therefore they cannot disappear.
-                */
-
-                employees =
-                    uploaded;
-
-
-                generatedTXT = "";
-
-
-                document.getElementById(
-                    "excelStatus"
-                ).innerText = "Yes";
-
-
-                document.getElementById(
-                    "txtStatus"
-                ).innerText = "No";
-
-
-                renderTable();
-
-
-                alert(
-                    uploaded.length +
-                    " employee records loaded successfully."
-                );
-
-
-                event.target.value = "";
-
-
-            }
-            catch(error){
-
-                console.error(error);
-
-                alert(
-                    "Excel read nahi ho saka. Template format check karo."
-                );
-
-            }
-
-        };
-
-
-    reader.readAsArrayBuffer(file);
-
+    const result=adjustPayroll(days||0,rate||0,gross||0);
+    const padded=[...row];
+    while(padded.length<originalHeader.length)padded.push("");
+    out.push([...padded,result.days,result.rate,result.gross,result.incentive,result.rule]);
+    processed++;
+   }
+   const wsOut=XLSX.utils.aoa_to_sheet(out);
+   wsOut["!cols"]=outHeader.map((h,i)=>({wch:Math.max(15,Math.min(38,String(h??"").length+3))}));
+   const wbOut=XLSX.utils.book_new();
+   XLSX.utils.book_append_sheet(wbOut,wsOut,"Adjusted Payroll");
+   // Add rules sheet
+   const rules=[
+    ["PF TOOL - PAYROLL ADJUSTMENT RULES",""],
+    ["Daily Wages below ₹513","Gross Salary ÷ 513 = full Present Days; remaining amount goes to Product Incentive. Present Days maximum 26."],
+    ["Decimal Present Days up to 26","Example 13.26: Present Days = 13; 0.26 × Salary Per Day goes to Product Incentive."],
+    ["Present Days above 26","Present Days = 26; all extra days (including decimal) × Salary Per Day go to Product Incentive."],
+    ["Total","Adjusted Gross Salary + Product Incentive follows the adjustment calculation."],
+   ];
+   const wsRules=XLSX.utils.aoa_to_sheet(rules);wsRules["!cols"]=[{wch:34},{wch:110}];
+   XLSX.utils.book_append_sheet(wbOut,wsRules,"Rules");
+   const safeClient=(clientID||"CLIENT").replace(/[^a-z0-9_-]/gi,"_");
+   const filename="PF_TOOL_PAYROLL_ADJUSTED_"+safeClient+".xlsx";
+   XLSX.writeFile(wbOut,filename);
+   document.getElementById("adjustBox").style.display="block";
+   document.getElementById("adjustStatus").innerText=processed+" employee records processed. Adjusted Excel download ho gaya.";
+   downloads++;document.getElementById("downloadCount").innerText=downloads;
+   event.target.value="";
+  }catch(err){
+   console.error(err);alert("Payroll Excel process nahi ho saka. Header format check karo.");
+   event.target.value="";
+  }
+ };
+ reader.readAsArrayBuffer(file);
 }
-
-
-/* =====================================================
-   NORMALIZE HEADER
-===================================================== */
-
-function normalizeHeader(header){
-
-    return String(header)
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g,"");
-
+function findPayrollHeaders(matrix){
+ // First 15 rows me header search, kyunki user ke Excel me upar title bhi ho sakta hai.
+ const max=Math.min(matrix.length,15);
+ for(let r=0;r<max;r++){
+  const normalized=(matrix[r]||[]).map(normalizeHeader);
+  const daysCol=findHeader(normalized,["totaldays","presentdays","totalday"]);
+  const rateCol=findHeader(normalized,["salaryperday","dailywages","dailywage","salaryday","wagesperday"]);
+  const grossCol=findHeader(normalized,["grosssalary","grosswages","gross"]);
+  if(daysCol>=0&&rateCol>=0&&grossCol>=0)return {headerRow:r,daysCol,rateCol,grossCol};
+ }
+ return null;
 }
-
-
-/* =====================================================
-   GET VALUE
-===================================================== */
-
-function getValue(obj,keys){
-
-    for(
-        let i=0;
-        i<keys.length;
-        i++
-    ){
-
-        if(
-            Object.prototype.hasOwnProperty
-            .call(
-                obj,
-                keys[i]
-            )
-        ){
-
-            return obj[keys[i]];
-
-        }
-
-    }
-
-
-    return "";
-
+function findHeader(arr,keys){for(const k of keys){const i=arr.indexOf(k);if(i>=0)return i}return -1}
+function adjustPayroll(days,rate,gross){
+ if(gross<=0||days<=0)return {days:0,rate:rate,gross:0,incentive:0,rule:"No wages"};
+ if(rate<513){
+  let full=Math.floor(gross/513);
+  let nd=Math.min(full,26);
+  let ng=nd*513;
+  let inc=gross-ng;
+  return {days:nd,rate:513,gross:ng,incentive:inc,rule:"Daily rate < ₹513"};
+ }
+ if(days>26){
+  const nd=26,ng=nd*rate,inc=(days-26)*rate;
+  return {days:nd,rate:rate,gross:ng,incentive:inc,rule:"Days > 26"};
+ }
+ const full=Math.floor(days),frac=days-full;
+ return {days:full,rate:rate,gross:full*rate,incentive:frac*rate,rule:frac>0?"Decimal day → fraction to Product Incentive":"No adjustment"};
 }
-
-
-/* =====================================================
-   FORMAT NUMBER
-===================================================== */
-
-function formatNumber(value){
-
-    if(
-        value === null ||
-        value === undefined ||
-        value === ""
-    ){
-
-        return "";
-
-    }
-
-
-    const n =
-        Number(value);
-
-
-    if(!Number.isFinite(n)){
-
-        return "";
-
-    }
-
-
-    return Number.isInteger(n)
-        ? String(n)
-        : n.toFixed(2);
-
-}
-
-
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
-
-function escapeHTML(value){
-
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-/* =====================================================
-   SUMMARY
-===================================================== */
-
-function updateSummary(){
-
-    document.getElementById(
-        "totalRecords"
-    ).innerText =
-        employees.length;
-
-}
-
-
-/* =====================================================
-   GENERATE TXT
-===================================================== */
-
+function num(v){if(v===null||v===undefined||String(v).trim()==="")return null;const n=Number(String(v).replace(/,/g,""));return Number.isFinite(n)?n:null}
+function normalizeHeader(header){return String(header??"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+function getValue(obj,keys){for(const k of keys)if(Object.prototype.hasOwnProperty.call(obj,k))return obj[k];return ""}
+function escapeHTML(value){return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function updateSummary(){document.getElementById("totalRecords").innerText=employees.length}
 function generateTXT(){
-
-    if(employees.length === 0){
-
-        alert(
-            "Pehle employee data upload/enter karo."
-        );
-
-        return;
-
-    }
-
-
-    /*
-       EXACT 11 FIELD ORDER
-       FROM YOUR ECR EXCEL
-
-       1 UAN
-       2 MEMBER NAME
-       3 GROSS WAGES
-       4 BASIC WAGES
-       5 EPS WAGES
-       6 EDLI WAGES
-       7 EPF CONTRI. REMITTED
-       8 EPS CONTRI. REMITTED
-       9 EPF EPS DIFF REMITTED
-       10 NCP DAYS
-       11 REFUND OF ADVANCE
-
-       Separator:
-       #~#
-    */
-
-
-    const lines = [];
-
-
-    employees.forEach(
-        emp=>{
-
-            const calc =
-                calculateEmployee(emp);
-
-
-            lines.push(
-
-                [
-
-                    emp.uan,
-
-                    emp.name,
-
-                    valueForTXT(emp.gross),
-
-                    valueForTXT(emp.basic),
-
-                    valueForTXT(
-                        calc.epsWages
-                    ),
-
-                    valueForTXT(
-                        calc.edliWages
-                    ),
-
-                    valueForTXT(
-                        calc.epfContribution
-                    ),
-
-                    valueForTXT(
-                        calc.epsContribution
-                    ),
-
-                    valueForTXT(
-                        calc.difference
-                    ),
-
-                    valueForTXT(
-                        emp.ncp
-                    ),
-
-                    valueForTXT(
-                        emp.refund
-                    )
-
-                ].join("#~#")
-
-            );
-
-        }
-    );
-
-
-    generatedTXT =
-        lines.join("\r\n");
-
-
-    document.getElementById(
-        "txtStatus"
-    ).innerText = "Yes";
-
-
-    downloadTXT();
-
+ if(!employees.length){alert("Pehle employee data enter/upload karo.");return}
+ generatedTXT=employees.map(emp=>[emp.uan,emp.name,emp.gross,emp.basic,emp.ncp,emp.refund].join("|")).join("\r\n");
+ document.getElementById("txtStatus").innerText="Yes";downloadTXT();
 }
-
-
-/* =====================================================
-   TXT VALUE
-===================================================== */
-
-function valueForTXT(value){
-
-    if(
-        value === null ||
-        value === undefined ||
-        value === ""
-    ){
-
-        return "";
-
-    }
-
-
-    return String(value);
-
-}
-
-
-/* =====================================================
-   DOWNLOAD TXT
-===================================================== */
-
 function downloadTXT(){
-
-    if(!generatedTXT){
-
-        if(employees.length === 0){
-
-            alert(
-                "Pehle employee data enter karo."
-            );
-
-            return;
-
-        }
-
-
-        generateTXT();
-
-        return;
-
-    }
-
-
-    const blob =
-        new Blob(
-            [
-                generatedTXT
-            ],
-            {
-                type:
-                    "text/plain;charset=utf-8"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const a =
-        document.createElement("a");
-
-
-    a.href =
-        url;
-
-
-    a.download =
-        "PF_TOOL_" +
-        (clientID || "DATA") +
-        ".txt";
-
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    document.body.removeChild(a);
-
-
-    URL.revokeObjectURL(url);
-
-
-    downloads++;
-
-
-    document.getElementById(
-        "downloadCount"
-    ).innerText =
-        downloads;
-
+ if(!generatedTXT){if(!employees.length){alert("Pehle employee data enter/upload karo.");return}generateTXT();return}
+ const blob=new Blob([generatedTXT],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="PF_TOOL_"+(clientID||"DATA")+".txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+ downloads++;document.getElementById("downloadCount").innerText=downloads;
 }
-
-
-/* =====================================================
-   FOCUS TABLE
-===================================================== */
-
-function focusTable(){
-
-    document.getElementById(
-        "employeeTableArea"
-    ).scrollIntoView({
-        behavior:"smooth"
-    });
-
-}
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-function logout(){
-
-    localStorage.removeItem(
-        "pf_logged_in"
-    );
-
-    localStorage.removeItem(
-        "pf_client_id"
-    );
-
-    localStorage.removeItem(
-        "pf_client_name"
-    );
-
-
-    window.location.href =
-        "index.html";
-
-}
-
-
-/* =====================================================
-   INITIAL ROWS
-===================================================== */
-
-for(
-    let i=0;
-    i<6;
-    i++
-){
-
-    addRow();
-
-}
-
+function focusTable(){document.getElementById("employeeTableArea").scrollIntoView({behavior:"smooth"})}
+function logout(){localStorage.removeItem("pf_logged_in");localStorage.removeItem("pf_client_id");localStorage.removeItem("pf_client_name");window.location.href="index.html"}
+for(let i=0;i<6;i++)addRow();
 </script>
-
 </body>
-
 </html>
