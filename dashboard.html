@@ -67,6 +67,7 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 <label for="excelFile" class="btn btn-blue" style="display:inline-block;">⬆️ Upload Excel</label>
 <input type="file" id="excelFile" accept=".xlsx,.xls,.csv">
 <button class="btn btn-orange" onclick="downloadProfessionalTaxForm()">📄 Download Professional Tax Form 5</button>
+<button class="btn btn-purple" onclick="uploadECRToEPFO()">🚀 Upload ECR to EPFO</button>
 <button class="btn btn-orange" onclick="addRow()">＋ Add Employee</button>
 <button class="btn btn-red" onclick="clearAll()">🗑 Clear All Data</button>
 </div>
@@ -79,7 +80,13 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 </table>
 </div>
 
-<div class="note">ℹ️ <strong>Note:</strong> PF Excel upload karke employee data load karein. Professional Tax ke liye upar diye gaye <b>Download Professional Tax Form 5</b> button ka use karein.</div>
+<div class="note">
+ℹ️ <strong>Note:</strong> PF Excel upload karke employee data load karein.
+Professional Tax ke liye upar diye gaye <b>Download Professional Tax Form 5</b> button ka use karein.
+<br><br>
+🚀 <strong>EPFO Upload:</strong> Pehle ECR generate karein, phir <b>Upload ECR to EPFO</b> dabayein.
+Aapke PC par PF TOOL Uploader installed aur running hona chahiye.
+</div>
 </section>
 </main>
 
@@ -184,9 +191,52 @@ function downloadTXT(){
  a.href=url;a.download="PF_TOOL_"+(clientID||"DATA")+".txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
  downloads++;document.getElementById("downloadCount").innerText=downloads;
 }
+async function uploadECRToEPFO(){
+ if(!employees.length){
+  alert("Pehle employee data enter/upload karo.");
+  return;
+ }
+
+ // Build ECR text without forcing a second browser download.
+ if(!generatedTXT){
+  generatedTXT=employees.map(emp=>[
+   emp.uan,emp.name,emp.gross,emp.basic,emp.ncp,emp.refund
+  ].join("|")).join("\\r\\n");
+  document.getElementById("txtStatus").innerText="Yes";
+ }
+
+ const monthNames=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+ const now=new Date();
+ const filename="PF_TOOL_"+monthNames[now.getMonth()]+String(now.getFullYear()).slice(-2)+".txt";
+
+ try{
+  const response=await fetch("http://127.0.0.1:18765/upload-ecr",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    ecrText:generatedTXT,
+    filename:filename
+   })
+  });
+
+  const result=await response.json();
+
+  if(result.ok){
+   document.getElementById("txtStatus").innerText="Sent to EPFO";
+   alert("ECR PF TOOL Uploader ko successfully bhej diya gaya. EPFO portal open hona chahiye.");
+  }else{
+   alert("Uploader error: "+(result.error||"Unknown error"));
+  }
+ }catch(error){
+  console.error(error);
+  alert(
+   "PF TOOL Uploader connect nahi ho raha.\\n\\n"+
+   "Pehle PF_TOOL_Uploader.exe start karein, phir dobara Upload ECR to EPFO dabayein."
+  );
+ }
+}
+
 function focusTable(){document.getElementById("employeeTableArea").scrollIntoView({behavior:"smooth"})}
 function logout(){localStorage.removeItem("pf_logged_in");localStorage.removeItem("pf_client_id");localStorage.removeItem("pf_client_name");window.location.href="index.html"}
 for(let i=0;i<6;i++)addRow();
 </script>
-</body>
-</html>
