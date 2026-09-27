@@ -27,6 +27,9 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 .action-buttons{display:flex;gap:6px}.edit-btn,.delete-btn{width:38px;height:38px;border-radius:7px;cursor:pointer;background:white;font-size:17px}.edit-btn{border:1px solid #1769d8;color:#1769d8}.delete-btn{border:1px solid #f04438;color:#d92d20}
 .note{margin-top:20px;padding:14px 16px;background:#f5f9ff;border:1px solid #b9d8ff;border-radius:9px;color:#1755a0;font-size:14px}.empty{text-align:center;padding:40px;color:#98a2b3}
 @media(max-width:1000px){.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:750px){.sidebar{position:relative;width:100%;height:auto}.menu{display:flex;flex-wrap:wrap;gap:5px}.menu button{width:auto;margin:0}.sidebar-footer{margin-top:15px}.main{margin-left:0;padding:15px}.topbar{flex-direction:column;align-items:stretch}.summary{grid-template-columns:1fr}.btn-red{margin-left:0}}
+.btn-purple{background:#6f42c1;color:white;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700;}
+.btn-purple:hover{background:#59339d;}
+<style>.btn-purple{background:#6f42c1;color:#fff;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700}.btn-purple:hover{background:#59339d}</style>
 </style>
 </head>
 <body>
@@ -67,9 +70,9 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 <label for="excelFile" class="btn btn-blue" style="display:inline-block;">⬆️ Upload Excel</label>
 <input type="file" id="excelFile" accept=".xlsx,.xls,.csv">
 <button class="btn btn-orange" onclick="downloadProfessionalTaxForm()">📄 Download Professional Tax Form 5</button>
-<button class="btn btn-purple" onclick="uploadECRToEPFO()">🚀 Upload ECR to EPFO</button>
 <button class="btn btn-orange" onclick="addRow()">＋ Add Employee</button>
 <button class="btn btn-red" onclick="clearAll()">🗑 Clear All Data</button>
+<button class="btn btn-purple" onclick="uploadECRToEPFO()">🚀 Upload ECR to EPFO</button>
 </div>
 
 
@@ -80,13 +83,7 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 </table>
 </div>
 
-<div class="note">
-ℹ️ <strong>Note:</strong> PF Excel upload karke employee data load karein.
-Professional Tax ke liye upar diye gaye <b>Download Professional Tax Form 5</b> button ka use karein.
-<br><br>
-🚀 <strong>EPFO Upload:</strong> Pehle ECR generate karein, phir <b>Upload ECR to EPFO</b> dabayein.
-Aapke PC par PF TOOL Uploader installed aur running hona chahiye.
-</div>
+<div class="note">ℹ️ <strong>Note:</strong> PF Excel upload karke employee data load karein. Professional Tax ke liye upar diye gaye <b>Download Professional Tax Form 5</b> button ka use karein.</div>
 </section>
 </main>
 
@@ -191,52 +188,63 @@ function downloadTXT(){
  a.href=url;a.download="PF_TOOL_"+(clientID||"DATA")+".txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
  downloads++;document.getElementById("downloadCount").innerText=downloads;
 }
-async function uploadECRToEPFO(){
- if(!employees.length){
-  alert("Pehle employee data enter/upload karo.");
-  return;
- }
-
- // Build ECR text without forcing a second browser download.
- if(!generatedTXT){
-  generatedTXT=employees.map(emp=>[
-   emp.uan,emp.name,emp.gross,emp.basic,emp.ncp,emp.refund
-  ].join("|")).join("\\r\\n");
-  document.getElementById("txtStatus").innerText="Yes";
- }
-
- const monthNames=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
- const now=new Date();
- const filename="PF_TOOL_"+monthNames[now.getMonth()]+String(now.getFullYear()).slice(-2)+".txt";
-
- try{
-  const response=await fetch("http://127.0.0.1:18765/upload-ecr",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({
-    ecrText:generatedTXT,
-    filename:filename
-   })
-  });
-
-  const result=await response.json();
-
-  if(result.ok){
-   document.getElementById("txtStatus").innerText="Sent to EPFO";
-   alert("ECR PF TOOL Uploader ko successfully bhej diya gaya. EPFO portal open hona chahiye.");
-  }else{
-   alert("Uploader error: "+(result.error||"Unknown error"));
-  }
- }catch(error){
-  console.error(error);
-  alert(
-   "PF TOOL Uploader connect nahi ho raha.\\n\\n"+
-   "Pehle PF_TOOL_Uploader.exe start karein, phir dobara Upload ECR to EPFO dabayein."
-  );
- }
-}
-
 function focusTable(){document.getElementById("employeeTableArea").scrollIntoView({behavior:"smooth"})}
 function logout(){localStorage.removeItem("pf_logged_in");localStorage.removeItem("pf_client_id");localStorage.removeItem("pf_client_name");window.location.href="index.html"}
 for(let i=0;i<6;i++)addRow();
 </script>
+
+
+/* =====================================================
+   PF TOOL LOCAL EPFO UPLOADER
+===================================================== */
+async function uploadECRToEPFO(){
+    if(!employees || employees.length===0){
+        alert("Pehle employee data upload/enter karo.");
+        return;
+    }
+
+    // If TXT has not been generated yet, generate it first.
+    if(!generatedTXT){
+        generateTXT();
+    }
+
+    if(!generatedTXT){
+        alert("ECR TXT generate nahi hua.");
+        return;
+    }
+
+    const d=new Date();
+    const mon=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"][d.getMonth()];
+    const yy=String(d.getFullYear()).slice(-2);
+    const filename=`PF_TOOL_${mon}${yy}.txt`;
+
+    try{
+        const r=await fetch("http://127.0.0.1:18765/upload-ecr",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({filename,ecrText:generatedTXT})
+        });
+        const data=await r.json();
+        if(!r.ok || !data.ok) throw new Error(data.error || "PF TOOL uploader not running");
+        alert("PF TOOL uploader ne ECR receive kar liya hai. EPFO portal open hoga. Login/captcha/OTP aap EPFO par khud complete karein.");
+    }catch(e){
+        alert("PF TOOL Uploader installed/running nahi hai. Pehle PF TOOL Setup.exe install karke PF TOOL start karein.");
+    }
+}
+
+
+<script>
+async function uploadECRToEPFO(){
+  if(typeof employees!=='undefined' && employees.length===0){alert("Pehle employee data upload/enter karo.");return;}
+  if(typeof generatedTXT==='undefined' || !generatedTXT){ if(typeof generateTXT==='function') generateTXT(); }
+  if(!generatedTXT){alert("ECR TXT generate nahi hua.");return;}
+  const d=new Date(), mon=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"][d.getMonth()], yy=String(d.getFullYear()).slice(-2);
+  try{
+    const r=await fetch("http://127.0.0.1:18765/upload-ecr",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({filename:`PF_TOOL_${mon}${yy}.txt`,ecrText:generatedTXT})});
+    const data=await r.json(); if(!r.ok||!data.ok) throw new Error(data.error||"Uploader error");
+    alert("ECR PF TOOL Uploader ko mil gaya. EPFO portal open hoga. Login/captcha/OTP EPFO par complete karein.");
+  }catch(e){alert("PF TOOL Setup install/run nahi hai. Pehle PF TOOL Setup.exe install karke PF TOOL start karein.");}
+}
+</script>
+</body>
+</html>
