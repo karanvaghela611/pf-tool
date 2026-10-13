@@ -27,9 +27,6 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 .action-buttons{display:flex;gap:6px}.edit-btn,.delete-btn{width:38px;height:38px;border-radius:7px;cursor:pointer;background:white;font-size:17px}.edit-btn{border:1px solid #1769d8;color:#1769d8}.delete-btn{border:1px solid #f04438;color:#d92d20}
 .note{margin-top:20px;padding:14px 16px;background:#f5f9ff;border:1px solid #b9d8ff;border-radius:9px;color:#1755a0;font-size:14px}.empty{text-align:center;padding:40px;color:#98a2b3}
 @media(max-width:1000px){.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:750px){.sidebar{position:relative;width:100%;height:auto}.menu{display:flex;flex-wrap:wrap;gap:5px}.menu button{width:auto;margin:0}.sidebar-footer{margin-top:15px}.main{margin-left:0;padding:15px}.topbar{flex-direction:column;align-items:stretch}.summary{grid-template-columns:1fr}.btn-red{margin-left:0}}
-.btn-purple{background:#6f42c1;color:white;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700;}
-.btn-purple:hover{background:#59339d;}
-<style>.btn-purple{background:#6f42c1;color:#fff;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700}.btn-purple:hover{background:#59339d}</style>
 </style>
 </head>
 <body>
@@ -72,7 +69,6 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 <button class="btn btn-orange" onclick="downloadProfessionalTaxForm()">📄 Download Professional Tax Form 5</button>
 <button class="btn btn-orange" onclick="addRow()">＋ Add Employee</button>
 <button class="btn btn-red" onclick="clearAll()">🗑 Clear All Data</button>
-<a class="btn btn-purple" href="https://unifiedportal-emp.epfindia.gov.in/epfo/" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">🌐 Open EPFO Portal</a>
 </div>
 
 
@@ -83,7 +79,7 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 </table>
 </div>
 
-<div class="note">ℹ️ <strong>Note:</strong><br>You can also perform bulk upload by filling the Excel template and uploading the completed file.<br>Form 5 is provided as a format/template only and must be filled manually.<br>For employees with Gross Salary above ₹12,000, enter the tax amount at ₹200 as per your applicable rule.</div>
+<div class="note">ℹ️ <strong>Note:</strong> PF Excel upload karke employee data load karein. Professional Tax ke liye upar diye gaye <b>Download Professional Tax Form 5</b> button ka use karein.</div>
 </section>
 </main>
 
@@ -179,7 +175,18 @@ function escapeHTML(value){return String(value??"").replace(/&/g,"&amp;").replac
 function updateSummary(){document.getElementById("totalRecords").innerText=employees.length}
 function generateTXT(){
  if(!employees.length){alert("Pehle employee data enter/upload karo.");return}
- generatedTXT=employees.map(emp=>[emp.uan,emp.name,emp.gross,emp.basic,emp.ncp,emp.refund].join("|")).join("\r\n");
+ // Match the legacy August ECR text layout: 12 fields separated by #~#.
+ // Contribution fields follow the supplied legacy sample's calculation pattern.
+ const roundRupee = value => Math.round(Number(value) || 0);
+ generatedTXT=employees.map(emp=>{
+  const basic=Number(emp.basic)||0;
+  const epsWages=basic;
+  const edliWages=basic;
+  const epfContribution=roundRupee(basic*0.12);
+  const epsContribution=roundRupee(basic*0.0833);
+  const epfEpsDifference=epfContribution-epsContribution;
+  return [emp.uan,emp.name,emp.gross,emp.basic,epsWages,edliWages,epfContribution,epsContribution,epfEpsDifference,emp.ncp,emp.refund].join("#~#");
+ }).join("\r\n");
  document.getElementById("txtStatus").innerText="Yes";downloadTXT();
 }
 function downloadTXT(){
@@ -192,6 +199,5 @@ function focusTable(){document.getElementById("employeeTableArea").scrollIntoVie
 function logout(){localStorage.removeItem("pf_logged_in");localStorage.removeItem("pf_client_id");localStorage.removeItem("pf_client_name");window.location.href="index.html"}
 for(let i=0;i<6;i++)addRow();
 </script>
-
 </body>
 </html>
