@@ -501,17 +501,23 @@ function renderSalarySlipPreview(){
   if(salarySlipRows.length>30)out+=`<p>Preview first 30 employees. PDF will contain all ${salarySlipRows.length} slips.</p>`;
   document.getElementById('salarySlipPreview').innerHTML=out;
 }
-function downloadSalarySlipPDF(){
+async function downloadSalarySlipPDF(){
   if(!salarySlipRows.length){alert('Pehle filled Excel upload karein.');return;}
   if(!window.jspdf||!window.jspdf.jsPDF){alert('PDF library load nahi hui. Internet connection check karke refresh karein.');return;}
+  const btn=document.getElementById('downloadSalarySlipPdf');
+  const status=document.getElementById('salarySlipStatus');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Creating PDF...';}
   const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
   const earnings=["Basic","H.R.A.","CONV.","MEDICAL","OTHER","WASHING","SPECIAL","EDUCATI."];
   const deductions=["P.F.","E.S.I.","T.D.S.","P.T.","Loan","Advance","L.W.F.","CANTEEN","OTHER Deduction"];
   const money=v=>salarySlipPreviewMoney(v);
   const txt=(v)=>String(v??'').trim()||'';
-  salarySlipRows.forEach((r,i)=>{
+  for(let i=0;i<salarySlipRows.length;i++){
+    const r=salarySlipRows[i];
     if(i)doc.addPage();
+    if(status)status.textContent=`Creating salary slips: ${i+1} of ${salarySlipRows.length}`;
+    if(i>0 && i%5===0) await new Promise(resolve=>setTimeout(resolve,0));
     const left=13,right=197,width=184;
     let y=13;
     doc.setDrawColor(45);doc.setLineWidth(.35);doc.rect(left,y,width,270);
@@ -525,7 +531,7 @@ function downloadSalarySlipPDF(){
         const maxW=27,maxH=22,ratio=Math.min(maxW/props.width,maxH/props.height);
         const logoW=props.width*ratio,logoH=props.height*ratio;
         const logoType=salaryCompanyLogoData.startsWith("data:image/png")?"PNG":"JPEG";
-        doc.addImage(salaryCompanyLogoData,logoType,left+3,y+1,logoW,logoH);
+        doc.addImage(salaryCompanyLogoData,logoType,left+3,y+1,logoW,logoH,'company-logo','FAST');
       }catch(err){console.warn("Company logo could not be added to PDF",err);}
     }
     doc.setFont('times','bold');doc.setFontSize(12);doc.text(txt(r["Company Name"]).slice(0,55),companyTextX,y+7);
@@ -557,7 +563,7 @@ function downloadSalarySlipPDF(){
     const attendanceValues=[r["Present"],r["C.L."],r["P.L."],r["S.L."],r["W.O."],r["P.Holl"],salarySum(r,["Present","C.L.","P.L.","S.L.","W.O.","P.Holl"]),salarySum(r,earnings)];
     attendanceValues.forEach((v,j)=>doc.text(j===7?money(v):String(v??''),colX[j]+colW[j]/2,y+11,{align:'center'}));
     y+=15;doc.line(left,y,right,y);
-    const mid=left+92;doc.line(mid,y,mid,y+67);
+    const mid=left+92;doc.line(mid,y,mid,y+82);
     doc.setFontSize(9);
     earnings.forEach((k,j)=>{
       doc.text(k, left+42, y+7+j*7,{align:'right'});
@@ -568,11 +574,13 @@ function downloadSalarySlipPDF(){
       const val=salaryNum(r[k]);
       if(val)doc.text(money(val),right-4,y+7+j*7,{align:'right'});
     });
-    doc.setFont('times','bold');doc.text('Total Addition :',left+3,y+64);
-    doc.text(money(salarySum(r,earnings)),mid-4,y+64,{align:'right'});
-    doc.text('Total Deduction :',mid+4,y+64);
-    doc.text(money(salarySum(r,deductions)),right-4,y+64,{align:'right'});
-    y+=68;doc.line(left,y,right,y);
+    // Keep totals on a dedicated row below the final deduction item.
+    doc.setFont('times','bold');
+    doc.text('Total Addition :',left+3,y+77);
+    doc.text(money(salarySum(r,earnings)),mid-4,y+77,{align:'right'});
+    doc.text('Total Deduction :',mid+4,y+77);
+    doc.text(money(salarySum(r,deductions)),right-4,y+77,{align:'right'});
+    y+=84;doc.line(left,y,right,y);
     const total=salarySum(r,earnings),ded=salarySum(r,deductions),net=total-ded;
     doc.setFontSize(9);doc.setFont('times','bold');
     doc.text('NET SALARY IN WORD:',left+3,y+7);
@@ -585,9 +593,11 @@ function downloadSalarySlipPDF(){
     doc.text(`For, ${txt(r["Company Name"])}`,right-3,y+12,{align:'right'});
     doc.text('Authorised Signatory',right-3,y+25,{align:'right'});
     doc.setFontSize(8);doc.text(`Employee ${i+1} of ${salarySlipRows.length}`,105,289,{align:'center'});
-  });
+  }
   const safeMonth=String(salarySlipRows[0]["Salary Month"]||'Salary').replace(/[^a-z0-9-]/gi,'_');
   doc.save(`Salary_Slips_${safeMonth}.pdf`);
+  if(status)status.textContent=`PDF created successfully: ${salarySlipRows.length} employee salary slips.`;
+  if(btn){btn.disabled=false;btn.textContent='📄 Download All Salary Slips PDF';}
 }
 </script>
 </body>
