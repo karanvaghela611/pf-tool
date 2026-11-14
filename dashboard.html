@@ -27,6 +27,17 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 .action-buttons{display:flex;gap:6px}.edit-btn,.delete-btn{width:38px;height:38px;border-radius:7px;cursor:pointer;background:white;font-size:17px}.edit-btn{border:1px solid #1769d8;color:#1769d8}.delete-btn{border:1px solid #f04438;color:#d92d20}
 .note{margin-top:20px;padding:14px 16px;background:#f5f9ff;border:1px solid #b9d8ff;border-radius:9px;color:#1755a0;font-size:14px}.empty{text-align:center;padding:40px;color:#98a2b3}
 @media(max-width:1000px){.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:750px){.sidebar{position:relative;width:100%;height:auto}.menu{display:flex;flex-wrap:wrap;gap:5px}.menu button{width:auto;margin:0}.sidebar-footer{margin-top:15px}.main{margin-left:0;padding:15px}.topbar{flex-direction:column;align-items:stretch}.summary{grid-template-columns:1fr}.btn-red{margin-left:0}}
+
+#wageCalculator{display:none;background:white;border:1px solid #dce5ef;border-radius:15px;padding:24px;box-shadow:0 5px 20px rgba(0,0,0,.04)}
+#wageCalculator h2{color:#102a5c;margin-bottom:8px}
+#wageCalculator .sub{color:#667085;margin-bottom:20px;font-size:14px}
+.wage-actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+.wage-status{margin-top:14px;color:#1769c2;font-weight:600}
+.wage-preview{overflow-x:auto;margin-top:20px}
+.wage-preview table{width:100%;border-collapse:collapse;min-width:850px}
+.wage-preview th,.wage-preview td{padding:11px;border:1px solid #e4e7ec;text-align:left;font-size:13px}
+.wage-preview th{background:#f2f6fc;color:#173b70}
+@media(max-width:800px){#wageCalculator{padding:16px}.wage-actions .btn{width:100%}}
 </style>
 </head>
 <body>
@@ -43,6 +54,7 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 <button onclick="focusTable()">👥 &nbsp; Employee Data</button>
 <button onclick="generateTXT()">📄 &nbsp; Generate TXT</button>
 <button onclick="downloadTXT()">⬇️ &nbsp; Downloads</button>
+<button onclick="showWageCalculator()">🧮 &nbsp; Daily Wages Calculator</button>
 <button onclick="logout()">🚪 &nbsp; Logout</button>
 </div>
 <div class="sidebar-footer">© 2026 PF TOOL<br>by Karan Vaghela<br>📞 9574140727</div>
@@ -80,6 +92,20 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 </div>
 
 <div class="note">ℹ️ <strong>Note:</strong> Upload your payroll Excel file to import employee data. The Professional Tax Form 5 template is for Gujarat. You must manually enter your company’s details in the template.</div>
+</section>
+
+<section id="wageCalculator">
+<h2>Daily Wages &amp; Incentive Calculator</h2>
+<p class="sub">Download the Excel template, enter employee details, and upload the completed file to generate the revised Excel report.</p>
+<div class="wage-actions">
+<button class="btn btn-green" onclick="downloadWageTemplate()">⬇️ Download Excel Template</button>
+<label for="wageExcelFile" class="btn btn-blue" style="display:inline-block;">⬆️ Upload Filled Excel</label>
+<input type="file" id="wageExcelFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="processWageExcel(event)">
+<button class="btn btn-purple" id="downloadWageResult" onclick="downloadWageResult()" style="display:none">⬇️ Download Revised Excel</button>
+<button class="btn" style="background:#eef2f7;color:#344054" onclick="showMainDashboard()">← Back to Dashboard</button>
+</div>
+<div id="wageStatus" class="wage-status">No file uploaded.</div>
+<div id="wagePreview" class="wage-preview"></div>
 </section>
 </main>
 
@@ -198,6 +224,110 @@ function downloadTXT(){
 function focusTable(){document.getElementById("employeeTableArea").scrollIntoView({behavior:"smooth"})}
 function logout(){localStorage.removeItem("pf_logged_in");localStorage.removeItem("pf_client_id");localStorage.removeItem("pf_client_name");window.location.href="index.html"}
 for(let i=0;i<6;i++)addRow();
+</script>
+
+
+<script>
+let wageResultRows = [];
+function showWageCalculator(){
+  document.querySelectorAll('.main > .summary, .main > .workspace').forEach(el=>el.style.display='none');
+  document.getElementById('wageCalculator').style.display='block';
+  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+  const btn=[...document.querySelectorAll('.menu button')].find(b=>b.textContent.includes('Daily Wages Calculator'));
+  if(btn) btn.classList.add('active');
+}
+function showMainDashboard(){
+  document.querySelectorAll('.main > .summary, .main > .workspace').forEach(el=>el.style.display='');
+  document.getElementById('wageCalculator').style.display='none';
+  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+  const btn=document.querySelector('.menu button');
+  if(btn) btn.classList.add('active');
+}
+function downloadWageTemplate(){
+  if(typeof XLSX==='undefined'){alert('Excel library load nahi hui. Internet connection check karke page refresh karein.');return;}
+  const rows=[
+    ['Sr No.','Employee Name','Present Days','Daily Wages','Gross Salary'],
+    [1,'',0,0,0]
+  ];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:10},{wch:28},{wch:16},{wch:16},{wch:18}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Wages Input');
+  XLSX.writeFile(wb,'PF_Daily_Wages_Template.xlsx');
+}
+function processWageExcel(event){
+  const file=event.target.files && event.target.files[0];
+  if(!file)return;
+  const status=document.getElementById('wageStatus');
+  status.textContent='Processing file...';
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
+      if(!rows.length)throw new Error('Excel file mein employee records nahi mile.');
+      const normalize=x=>String(x??'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+      const keys=Object.keys(rows[0]);
+      const findKey=(candidates)=>keys.find(k=>candidates.includes(normalize(k)));
+      const nameKey=findKey(['employeename','name','membername']);
+      const daysKey=findKey(['presentdays','presentday','days']);
+      const dailyKey=findKey(['dailywages','dailywage']);
+      const grossKey=findKey(['grosssalary','grosswages','gross']);
+      if(!nameKey||!daysKey||!dailyKey||!grossKey){
+        throw new Error('Please use the downloaded template with these columns: Employee Name, Present Days, Daily Wages, Gross Salary.');
+      }
+      wageResultRows=rows.map((r,i)=>{
+        const gross=Number(String(r[grossKey]).replace(/,/g,''))||0;
+        const originalDays=Number(r[daysKey])||0;
+        const originalDaily=Number(String(r[dailyKey]).replace(/,/g,''))||0;
+        if(gross<0||originalDaily<0||originalDays<0)throw new Error('Negative values are not accepted. Row '+(i+2));
+        const revisedDaily=Math.max(originalDaily,965);
+        const revisedDays=Math.min(26,Math.floor(gross/revisedDaily));
+        const incentive=Math.max(0,Math.round((gross-revisedDays*revisedDaily)*100)/100);
+        return {
+          'Sr. No.':r[Object.keys(r).find(k=>normalize(k)==='srno')]||i+1,
+          'Employee Name':r[nameKey],
+          'Original Present Days':originalDays,
+          'Original Daily Wages':originalDaily,
+          'Gross Salary':gross,
+          'Revised Present Days':revisedDays,
+          'Revised Daily Wages':revisedDaily,
+          'Incentive':incentive
+        };
+      });
+      renderWagePreview();
+      status.textContent='Successfully processed '+wageResultRows.length+' employee record(s).';
+      document.getElementById('downloadWageResult').style.display='inline-block';
+    }catch(err){
+      wageResultRows=[];
+      document.getElementById('wagePreview').innerHTML='';
+      document.getElementById('downloadWageResult').style.display='none';
+      status.textContent=err.message||'Unable to process this file.';
+    }
+  };
+  reader.onerror=()=>status.textContent='File read nahi ho payi. Please try again.';
+  reader.readAsArrayBuffer(file);
+}
+function renderWagePreview(){
+  const cols=Object.keys(wageResultRows[0]||{});
+  let html='<table><thead><tr>'+cols.map(c=>'<th>'+escapeWageHtml(c)+'</th>').join('')+'</tr></thead><tbody>';
+  html+=wageResultRows.slice(0,100).map(r=>'<tr>'+cols.map(c=>'<td>'+escapeWageHtml(r[c])+'</td>').join('')+'</tr>').join('');
+  html+='</tbody></table>';
+  if(wageResultRows.length>100)html+='<p style="padding:10px;color:#667085">Preview shows first 100 records. Download contains all records.</p>';
+  document.getElementById('wagePreview').innerHTML=html;
+}
+function escapeWageHtml(value){
+  return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function downloadWageResult(){
+  if(!wageResultRows.length)return;
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.json_to_sheet(wageResultRows);
+  ws['!cols']=[{wch:10},{wch:26},{wch:20},{wch:20},{wch:18},{wch:20},{wch:20},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,ws,'Revised Wages');
+  XLSX.writeFile(wb,'PF_Daily_Wages_Incentive_Result.xlsx');
+}
 </script>
 </body>
 </html>
