@@ -522,10 +522,10 @@ function downloadSalarySlipPDF(){
     if(salaryCompanyLogoData){
       try{
         const props=doc.getImageProperties(salaryCompanyLogoData);
-        const maxW=25,maxH=20,ratio=Math.min(maxW/props.width,maxH/props.height);
+        const maxW=27,maxH=22,ratio=Math.min(maxW/props.width,maxH/props.height);
         const logoW=props.width*ratio,logoH=props.height*ratio;
         const logoType=salaryCompanyLogoData.startsWith("data:image/png")?"PNG":"JPEG";
-        doc.addImage(salaryCompanyLogoData,logoType,left+3,y+3,logoW,logoH);
+        doc.addImage(salaryCompanyLogoData,logoType,left+3,y+1,logoW,logoH);
       }catch(err){console.warn("Company logo could not be added to PDF",err);}
     }
     doc.setFont('times','bold');doc.setFontSize(12);doc.text(txt(r["Company Name"]).slice(0,55),companyTextX,y+7);
@@ -560,8 +560,8 @@ function downloadSalarySlipPDF(){
     const mid=left+92;doc.line(mid,y,mid,y+67);
     doc.setFontSize(9);
     earnings.forEach((k,j)=>{
-      doc.text(k, left+35, y+7+j*7,{align:'right'});
-      doc.text(money(r[k]),left+42,y+7+j*7,{align:'right'});
+      doc.text(k, left+42, y+7+j*7,{align:'right'});
+      doc.text(money(r[k]),left+47,y+7+j*7,{align:'left'});
     });
     deductions.forEach((k,j)=>{
       doc.text(k, right-34,y+7+j*7,{align:'right'});
