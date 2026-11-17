@@ -69,7 +69,6 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 <button onclick="downloadTXT()">⬇️ &nbsp; Downloads</button>
 <button onclick="showWageCalculator()">🧮 &nbsp; Daily Wages Calculator</button>
 <button onclick="showSalarySlip()">🧾 &nbsp; Salary Slip Generator</button>
-<button onclick="showWagesSheet()">📑 &nbsp; Wages Sheet Generator</button>
 <button onclick="logout()">🚪 &nbsp; Logout</button>
 </div>
 <div class="sidebar-footer">© 2026 PF TOOL<br>by Karan Vaghela<br>📞 9574140727</div>
@@ -123,21 +122,6 @@ input[type=file]{display:none}.table-wrapper{width:100%;overflow-x:auto;border:1
 <div id="wageStatus" class="wage-status">No file uploaded.</div>
 <div id="wagePreview" class="wage-preview"></div>
 
-</section>
-
-<section id="wagesSheetGenerator" style="display:none;background:white;border:1px solid #dce5ef;border-radius:15px;padding:24px;box-shadow:0 5px 20px rgba(0,0,0,.04)">
-  <h2 style="color:#102a5c;margin-bottom:8px">Wages Sheet Generator</h2>
-  <p class="sub" style="color:#667085;margin-bottom:18px">Download the client template, fill company and employee details, upload it, and generate a Form-13 style wages register PDF.</p>
-  <div class="wage-actions" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0">
-    <button class="btn btn-green" onclick="downloadWagesSheetTemplate()">⬇️ Download Wages Sheet Template</button>
-    <label for="wagesSheetExcelFile" class="btn btn-blue" style="display:inline-block;cursor:pointer">⬆️ Upload Filled Excel</label>
-    <input type="file" id="wagesSheetExcelFile" accept=".xlsx,.xls" style="display:none" onchange="processWagesSheetExcel(event)">
-    <button class="btn btn-purple" id="downloadWagesSheetPdf" onclick="downloadWagesSheetPDF()" style="display:none">📄 Download Wages Sheet PDF</button>
-    <button class="btn" style="background:#eef2f7;color:#344054" onclick="showMainDashboard()">← Back to Dashboard</button>
-  </div>
-  <div id="wagesSheetStatus" style="font-weight:700;color:#0875d1;margin:12px 0">No file uploaded.</div>
-  <div id="wagesSheetPreview" class="wage-preview"></div>
-  <p style="margin-top:14px;color:#667085;font-size:12px">PDF layout follows the uploaded ALPS POLYTEX wages register sample. Excel processing and PDF generation happen in this browser.</p>
 </section>
 
 <section id="salarySlip">
@@ -293,7 +277,6 @@ let wageResultRows = [];
 function showWageCalculator(){
   document.querySelectorAll('.main > .summary, .main > .workspace').forEach(el=>el.style.display='none');
   document.getElementById('salarySlip').style.display='none';
-  document.getElementById('wagesSheetGenerator').style.display='none';
   document.getElementById('wageCalculator').style.display='block';
   document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
   const btn=[...document.querySelectorAll('.menu button')].find(b=>b.textContent.includes('Daily Wages Calculator'));
@@ -303,7 +286,6 @@ function showMainDashboard(){
   document.querySelectorAll('.main > .summary, .main > .workspace').forEach(el=>el.style.display='');
   document.getElementById('wageCalculator').style.display='none';
   document.getElementById('salarySlip').style.display='none';
-  document.getElementById('wagesSheetGenerator').style.display='none';
   document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
   const btn=document.querySelector('.menu button');
   if(btn) btn.classList.add('active');
@@ -442,7 +424,6 @@ function showSalarySlip(){
   loadSalaryCompanyLogo();
   document.querySelectorAll('.main > .summary, .main > .workspace').forEach(el=>el.style.display='none');
   document.getElementById('wageCalculator').style.display='none';
-  document.getElementById('wagesSheetGenerator').style.display='none';
   document.getElementById('salarySlip').style.display='block';
   document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
   const btn=[...document.querySelectorAll('.menu button')].find(b=>b.textContent.includes('Salary Slip Generator'));
@@ -619,173 +600,5 @@ async function downloadSalarySlipPDF(){
   if(btn){btn.disabled=false;btn.textContent='📄 Download All Salary Slips PDF';}
 }
 </script>
-
-<script>
-let wagesSheetCompany = {};
-let wagesSheetRows = [];
-const wsNorm = v => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
-const wsNum = v => { const n=Number(String(v ?? '').replace(/,/g,'')); return Number.isFinite(n)?n:0; };
-const wsMoney = v => Number(v||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-function showWagesSheet(){
-  document.querySelectorAll('.main > .summary, .main > .workspace').forEach(el=>el.style.display='none');
-  document.getElementById('wageCalculator').style.display='none';
-  document.getElementById('salarySlip').style.display='none';
-  document.getElementById('wagesSheetGenerator').style.display='block';
-  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
-  const btn=[...document.querySelectorAll('.menu button')].find(b=>b.textContent.includes('Wages Sheet Generator'));
-  if(btn)btn.classList.add('active');
-}
-function downloadWagesSheetTemplate(){
-  const url='PF_Wages_Sheet_Client_Template_v4.xlsx';
-  const a=document.createElement('a');a.href=url;a.download=url;document.body.appendChild(a);a.click();a.remove();
-}
-function processWagesSheetExcel(event){
-  const file=event.target.files && event.target.files[0]; if(!file)return;
-  const status=document.getElementById('wagesSheetStatus');
-  status.textContent='Reading employee and company details...';
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      const wb=XLSX.read(e.target.result,{type:'array'});
-      if(!wb.Sheets['Company Details'] || !wb.Sheets['Employee Input']) throw new Error('Please use the PF_Wages_Sheet_Client_Template_v4.xlsx template.');
-      const cws=wb.Sheets['Company Details'];
-      const cv=cell=>String(cws[cell]?.v ?? '').trim();
-      wagesSheetCompany={
-        name:cv('B3'), address:cv('B4'), month:cv('B5'),
-        workingDays:wsNum(cv('B6')), monthDays:wsNum(cv('B7')),
-        pfNo:cv('B8'), esiNo:cv('B9')
-      };
-      if(!wagesSheetCompany.name) throw new Error('Company Details sheet mein Company Name fill karein.');
-      if(!wagesSheetCompany.month) throw new Error('Salary Month fill karein.');
-      const ews=wb.Sheets['Employee Input'];
-      const rows=XLSX.utils.sheet_to_json(ews,{range:3,defval:'',raw:true});
-      const nonempty=rows.filter(r=>String(r['Employee Name']||'').trim());
-      if(!nonempty.length) throw new Error('Employee Input sheet mein employee records nahi mile.');
-      const required=['Daily Wages','Gross Wages','PF Applicable','ESIC Applicable'];
-      const first=nonempty[0];
-      for(const k of required) if(!(k in first)) throw new Error('Template columns change na karein. Missing column: '+k);
-      wagesSheetRows=nonempty.map((r,i)=>{
-        const gross=wsNum(r['Gross Wages']);
-        const originalDaily=wsNum(r['Daily Wages']);
-        if(gross<0||originalDaily<0) throw new Error('Negative wages allowed nahi hain. Employee row '+(i+5)+' check karein.');
-        const revisedDaily=Math.max(originalDaily,965);
-        const revisedDays=Math.min(26,Math.floor(gross/revisedDaily));
-        const incentive=Math.max(0,Math.round((gross-revisedDays*revisedDaily)*100)/100);
-        const basic=Math.round(revisedDays*revisedDaily*100)/100;
-        const earn={
-          'Basic+ DA':basic,'INCENTIVE':incentive,'H.R.A.':wsNum(r['HRA']),
-          'CONV.':wsNum(r['CONV.']),'MEDICAL':wsNum(r['MEDICAL']),
-          'OTHER':wsNum(r['OTHER EARNING']),'WASHING':wsNum(r['WASHING']),
-          'SPECIAL':wsNum(r['SPECIAL']),'EDUCATI.':wsNum(r['EDUCATION'])
-        };
-        const totalEarnings=Object.values(earn).reduce((a,b)=>a+b,0);
-        const pfYes=String(r['PF Applicable']).trim().toUpperCase()==='YES';
-        const esiYes=String(r['ESIC Applicable']).trim().toUpperCase()==='YES';
-        const pf=pfYes?Math.round(basic*.12*100)/100:0;
-        const esi=esiYes && totalEarnings<=21000?Math.round(totalEarnings*.0075*100)/100:0;
-        const pt=basic>11999?200:0;
-        const ded={
-          'P.F.':pf,'E.S.I.':esi,'P.Tax':pt,'T.D.S.':wsNum(r['TDS']),
-          'L.W.F.':wsNum(r['LWF']),'LOAN':wsNum(r['LOAN']),
-          'Advance':wsNum(r['ADVANCE']),'CANTEE':wsNum(r['CANTEEN']),
-          'OTHER':wsNum(r['OTHER DEDUCTION']),'Fine Amt':wsNum(r['FINE AMOUNT']),
-          'Damage Amt':wsNum(r['DAMAGE AMOUNT'])
-        };
-        const totalDed=Object.values(ded).reduce((a,b)=>a+b,0);
-        return {
-          sr:i+1,id:String(r['Employee ID']||''),name:String(r['Employee Name']||'').trim(),
-          designation:String(r['Designation']||''),pfNo:String(r['PF No.']||''),uan:String(r['UAN']||''),
-          esiNo:String(r['ESI No.']||''),present:wsNum(r['Present Days']),woff:wsNum(r['W.Off']),
-          pholi:wsNum(r['P.Holi']),cl:wsNum(r['C.L.']),pl:wsNum(r['P.L.']),sl:wsNum(r['S.L.']),
-          presentDays:wsNum(r['Present Days']),revisedDays,gross,daily:revisedDaily,originalDaily,
-          basic,incentive,earn,ded,totalEarnings,totalDed,
-          net:Math.round((totalEarnings-totalDed)*100)/100
-        };
-      });
-      const btn=document.getElementById('downloadWagesSheetPdf');btn.style.display='inline-block';
-      status.textContent=`Successfully processed ${wagesSheetRows.length} employee record(s). Revised days, incentive and deductions calculated.`;
-      renderWagesSheetPreview();
-    }catch(err){wagesSheetRows=[];document.getElementById('downloadWagesSheetPdf').style.display='none';status.textContent='Error: '+err.message;alert(err.message);}
-  };
-  reader.readAsArrayBuffer(file);
-}
-function renderWagesSheetPreview(){
-  const box=document.getElementById('wagesSheetPreview');
-  const rows=wagesSheetRows.slice(0,8).map(r=>`<tr><td>${r.sr}</td><td>${r.name}</td><td>${r.presentDays}</td><td>${r.revisedDays}</td><td>${wsMoney(r.daily)}</td><td>${wsMoney(r.basic)}</td><td>${wsMoney(r.incentive)}</td><td>${wsMoney(r.totalDed)}</td><td>${wsMoney(r.net)}</td></tr>`).join('');
-  box.innerHTML=`<p style="margin:8px 0 12px;color:#175cd3;font-weight:700">Preview (first ${Math.min(8,wagesSheetRows.length)} employees of ${wagesSheetRows.length})</p><div style="overflow:auto"><table class="wage-preview"><thead><tr><th>Sr.</th><th>Employee</th><th>Present Days</th><th>Revised Pay Days</th><th>Basic+DA Rate</th><th>Basic+DA</th><th>Incentive</th><th>Total Deduction</th><th>Net Payable</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-}
-async function downloadWagesSheetPDF(){
-  if(!wagesSheetRows.length){alert('Pehle filled Wages Sheet Excel upload karein.');return;}
-  if(!window.jspdf?.jsPDF){alert('PDF library load nahi hui. Internet connection check karein.');return;}
-  const btn=document.getElementById('downloadWagesSheetPdf');
-  const status=document.getElementById('wagesSheetStatus');
-  btn.disabled=true;btn.textContent='Creating PDF...';
-  try{
-    const {jsPDF}=window.jspdf;
-    const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true});
-    const W=297,H=210,left=8,right=289,usable=right-left;
-    const company=wagesSheetCompany;
-    const pages=Math.ceil(wagesSheetRows.length/2);
-    for(let p=0;p<pages;p++){
-      if(p)doc.addPage();
-      doc.setFont('times','bold');doc.setFontSize(12);
-      doc.text('Minimum Wages Act 1948',left,8);
-      doc.text('FORM - 13',W/2,8,{align:'center'});
-      doc.setFont('times','normal');doc.setFontSize(7);
-      doc.text('Register of Workers employed in an Establishment, Wage, Overtime, Fine, Deduction for Damage or Loss',W/2,12,{align:'center'});
-      doc.setFont('times','bold');doc.setFontSize(11);doc.text(company.name,left,19);
-      doc.setFont('times','normal');doc.setFontSize(7);
-      const addr=doc.splitTextToSize(company.address||'',175);
-      if(addr.length)doc.text(addr.slice(0,2),left,23);
-      doc.text(`PF No.: ${company.pfNo||'-'}`,right,18,{align:'right'});
-      doc.text(`ESI No.: ${company.esiNo||'-'}`,right,22,{align:'right'});
-      doc.text(`Salary period for the month of: ${company.month}`,right,26,{align:'right'});
-      doc.setDrawColor(70);doc.setLineWidth(.35);doc.rect(left,5,usable,26);
-      const subset=wagesSheetRows.slice(p*2,p*2+2);
-      subset.forEach((r,j)=>{
-        const y=34+j*86;
-        doc.setLineWidth(.3);doc.rect(left,y,usable,82);
-        doc.setFont('times','bold');doc.setFontSize(8);
-        doc.text(`${r.sr}. ${r.name}`,left+3,y+5);
-        doc.setFont('times','normal');doc.setFontSize(7);
-        doc.text(`Emp. ID: ${r.id||'-'}   Designation: ${r.designation||'-'}`,left+3,y+10);
-        doc.text(`PF No.: ${r.pfNo||'-'}   UAN: ${r.uan||'-'}   ESI No.: ${r.esiNo||'-'}`,left+3,y+14);
-        doc.text(`Present: ${r.presentDays}   W.Off: ${r.woff}   P.Holi: ${r.pholi}   C.L.: ${r.cl}   P.L.: ${r.pl}   S.L.: ${r.sl}`,left+3,y+18);
-        doc.text(`Revised Pay Days: ${r.revisedDays}   Basic+DA Rate: ${wsMoney(r.daily)}   Gross Wages: ${wsMoney(r.gross)}`,left+3,y+22);
-        const mid=left+137;
-        doc.line(mid,y+25,mid,y+72);
-        doc.setFont('times','bold');doc.setFontSize(7);
-        doc.text('EARNINGS',left+65,y+27,{align:'center'});
-        doc.text('DEDUCTIONS',mid+65,y+27,{align:'center'});
-        doc.setFont('times','normal');doc.setFontSize(7);
-        const earningEntries=Object.entries(r.earn);
-        const deductionEntries=Object.entries(r.ded);
-        earningEntries.forEach(([k,v],i)=>{
-          const yy=y+32+i*4.1;
-          doc.text(k,left+4,yy);
-          doc.text(wsMoney(v),mid-4,yy,{align:'right'});
-        });
-        deductionEntries.forEach(([k,v],i)=>{
-          const yy=y+32+i*4.1;
-          doc.text(k,mid+4,yy);
-          doc.text(wsMoney(v),right-4,yy,{align:'right'});
-        });
-        doc.setLineWidth(.2);doc.line(left,y+73,right,y+73);
-        doc.setFont('times','bold');doc.setFontSize(8);
-        doc.text(`Total Earnings: ${wsMoney(r.totalEarnings)}`,left+4,y+78);
-        doc.text(`Total Deduction: ${wsMoney(r.totalDed)}`,mid+4,y+78);
-        doc.text(`NET PAYABLE: ${wsMoney(r.net)}`,right-4,y+78,{align:'right'});
-      });
-      status.textContent=`Creating wages register PDF: ${Math.min((p+1)*2,wagesSheetRows.length)} of ${wagesSheetRows.length} employees`;
-      if(p%2===1)await new Promise(resolve=>setTimeout(resolve,0));
-    }
-    const safe=String(company.month||'Wages').replace(/[^a-z0-9_-]/gi,'_');
-    doc.save(`Wages_Register_${safe}.pdf`);
-    status.textContent=`PDF created successfully for ${wagesSheetRows.length} employees.`;
-  }catch(err){console.error(err);status.textContent='PDF error: '+err.message;alert('PDF create nahi hui: '+err.message);}
-  finally{btn.disabled=false;btn.textContent='📄 Download Wages Sheet PDF';}
-}
-</script>
-
 </body>
 </html>
