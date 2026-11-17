@@ -697,7 +697,8 @@ function processWagesSheetExcel(event){
           designation:String(r['Designation']||''),pfNo:String(r['PF No.']||''),uan:String(r['UAN']||''),
           esiNo:String(r['ESI No.']||''),present:wsNum(r['Present Days']),woff:wsNum(r['W.Off']),
           pholi:wsNum(r['P.Holi']),cl:wsNum(r['C.L.']),pl:wsNum(r['P.L.']),sl:wsNum(r['S.L.']),
-          daily:revisedDaily,originalDaily,gross,basic,incentive,earn,ded,totalEarnings,totalDed,
+          presentDays:wsNum(r['Present Days']),revisedDays,gross,daily:revisedDaily,originalDaily,
+          basic,incentive,earn,ded,totalEarnings,totalDed,
           net:Math.round((totalEarnings-totalDed)*100)/100
         };
       });
@@ -710,8 +711,8 @@ function processWagesSheetExcel(event){
 }
 function renderWagesSheetPreview(){
   const box=document.getElementById('wagesSheetPreview');
-  const rows=wagesSheetRows.slice(0,8).map(r=>`<tr><td>${r.sr}</td><td>${r.name}</td><td>${r.present}</td><td>${r.daily}</td><td>${r.basic.toFixed(2)}</td><td>${r.incentive.toFixed(2)}</td><td>${r.totalDed.toFixed(2)}</td><td>${r.net.toFixed(2)}</td></tr>`).join('');
-  box.innerHTML=`<p style="margin:8px 0 12px;color:#175cd3;font-weight:700">Preview (first ${Math.min(8,wagesSheetRows.length)} employees of ${wagesSheetRows.length})</p><div style="overflow:auto"><table class="wage-preview"><thead><tr><th>Sr.</th><th>Employee</th><th>Revised Days</th><th>Daily Wages</th><th>Basic+DA</th><th>Incentive</th><th>Total Deduction</th><th>Net Payable</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  const rows=wagesSheetRows.slice(0,8).map(r=>`<tr><td>${r.sr}</td><td>${r.name}</td><td>${r.presentDays}</td><td>${r.revisedDays}</td><td>${wsMoney(r.daily)}</td><td>${wsMoney(r.basic)}</td><td>${wsMoney(r.incentive)}</td><td>${wsMoney(r.totalDed)}</td><td>${wsMoney(r.net)}</td></tr>`).join('');
+  box.innerHTML=`<p style="margin:8px 0 12px;color:#175cd3;font-weight:700">Preview (first ${Math.min(8,wagesSheetRows.length)} employees of ${wagesSheetRows.length})</p><div style="overflow:auto"><table class="wage-preview"><thead><tr><th>Sr.</th><th>Employee</th><th>Present Days</th><th>Revised Pay Days</th><th>Basic+DA Rate</th><th>Basic+DA</th><th>Incentive</th><th>Total Deduction</th><th>Net Payable</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 async function downloadWagesSheetPDF(){
   if(!wagesSheetRows.length){alert('Pehle filled Wages Sheet Excel upload karein.');return;}
@@ -749,8 +750,8 @@ async function downloadWagesSheetPDF(){
         doc.setFont('times','normal');doc.setFontSize(7);
         doc.text(`Emp. ID: ${r.id||'-'}   Designation: ${r.designation||'-'}`,left+3,y+10);
         doc.text(`PF No.: ${r.pfNo||'-'}   UAN: ${r.uan||'-'}   ESI No.: ${r.esiNo||'-'}`,left+3,y+14);
-        doc.text(`Present: ${r.present}   W.Off: ${r.woff}   P.Holi: ${r.pholi}   C.L.: ${r.cl}   P.L.: ${r.pl}   S.L.: ${r.sl}`,left+3,y+18);
-        doc.text(`Revised Pay Days: ${r.basic?Math.floor(r.basic/r.daily):0}   Basic+DA Rate: ${wsMoney(r.daily)}   Gross Wages: ${wsMoney(r.gross)}`,left+3,y+22);
+        doc.text(`Present: ${r.presentDays}   W.Off: ${r.woff}   P.Holi: ${r.pholi}   C.L.: ${r.cl}   P.L.: ${r.pl}   S.L.: ${r.sl}`,left+3,y+18);
+        doc.text(`Revised Pay Days: ${r.revisedDays}   Basic+DA Rate: ${wsMoney(r.daily)}   Gross Wages: ${wsMoney(r.gross)}`,left+3,y+22);
         const mid=left+137;
         doc.line(mid,y+25,mid,y+72);
         doc.setFont('times','bold');doc.setFontSize(7);
